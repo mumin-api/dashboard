@@ -9,11 +9,14 @@ export const CookieBanner = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
+        let isMounted = true;
         const checkConsent = async () => {
+            if (!isMounted) return;
             try {
                 // Try to fetch consent from DB
                 const data = await gdprAPI.getConsent()
 
+                if (!isMounted) return;
                 // If we have any consent data, don't show the banner
                 if (data && Object.keys(data).length > 0) {
                     setIsVisible(false)
@@ -21,17 +24,21 @@ export const CookieBanner = () => {
                     setIsVisible(true)
                 }
             } catch (error) {
+                if (!isMounted) return;
                 // If unauthorized or error, show banner as it might be the login page
                 const localConsent = localStorage.getItem('mumin-cookie-consent')
                 if (!localConsent) {
                     setIsVisible(true)
                 }
             } finally {
-                setIsLoading(false)
+                if (isMounted) {
+                    setIsLoading(false)
+                }
             }
         }
 
         checkConsent()
+        return () => { isMounted = false; }
     }, [])
 
     const saveConsent = async (type: 'accepted' | 'declined') => {
@@ -88,7 +95,7 @@ export const CookieBanner = () => {
                             </div>
 
                             <p className="mb-6 text-sm leading-relaxed text-emerald-800/80 dark:text-emerald-200/70">
-                                We use cookies to enhance your experience, analyze site traffic, and prevent fraud. By clicking "Accept All", you agree to our use of cookies according to our{' '}
+                                We use cookies to enhance your experience, analyze site traffic, and prevent fraud. By clicking &quot;Accept All&quot;, you agree to our use of cookies according to our{' '}
                                 <Link href="/legal/privacy" className="font-medium text-emerald-600 underline decoration-emerald-500/30 underline-offset-4 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300">
                                     Privacy Policy
                                 </Link>.

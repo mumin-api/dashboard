@@ -54,6 +54,7 @@ export default function LoginPage() {
                         <span className="text-emerald-900 font-display text-2xl">Mumin API</span>
                     </div>
 
+                    <h2 className="text-xl font-display text-emerald-900">Welcome to Mumin&apos;s API</h2>
                     <h1 className="text-4xl font-display text-emerald-900 mb-2">
                         Welcome Back
                     </h1>
@@ -130,7 +131,7 @@ export default function LoginPage() {
                     </form>
 
                     <p className="mt-6 text-center text-sm text-charcoal/60 font-body">
-                        Don't have an account?{' '}
+                        Don&apos;t have an account?{' '}
                         <Link href="/register" className="text-emerald-600 hover:underline font-accent">
                             Create one
                         </Link>

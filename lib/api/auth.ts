@@ -2,12 +2,10 @@ import { apiClient } from './client'
 
 interface RegisterData {
     email: string
-    password: string
-    displayName?: string
-    tosAccepted: boolean
-    tosVersion: string
-    privacyAccepted: boolean
-    privacyVersion: string
+    acceptTerms: boolean
+    termsVersion: string
+    acceptPrivacyPolicy: boolean
+    privacyPolicyVersion: string
 }
 
 interface LoginData {
@@ -25,7 +23,7 @@ interface AuthResponse {
     message: string
 }
 
-export const authAPI = {
+export const authApi = {
     /**
      * Register new user
      * Backend sets httpOnly cookies automatically

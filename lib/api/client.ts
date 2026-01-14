@@ -46,44 +46,52 @@ class ApiClient {
         endpoint: string,
         options: RequestInit
     ): Promise<T> {
-        if (!this.isRefreshing) {
-            this.isRefreshing = true
-
-            try {
-                // Try to refresh token
-                await fetch(`${this.baseUrl}/auth/refresh`, {
-                    method: 'POST',
-                    credentials: 'include', // Send refresh_token cookie
-                })
-
-                this.isRefreshing = false
-                this.onRefreshed('refreshed')
-
-                // Retry original request
-                return this.request<T>(endpoint, options)
-            } catch (error) {
-                this.isRefreshing = false
-                this.onRefreshed('failed')
-
-                // Redirect to login
-                if (typeof window !== 'undefined') {
-                    window.location.href = '/login'
-                }
-
-                throw error
-            }
+        // Prevent infinite loops if the refresh call itself is failing or if we're already refreshing
+        if (endpoint.includes('/auth/refresh')) {
+            throw new Error('Refresh failed')
         }
 
-        // Wait for refresh to complete
-        return new Promise((resolve, reject) => {
-            this.subscribeTokenRefresh((status: string) => {
-                if (status === 'refreshed') {
-                    this.request<T>(endpoint, options).then(resolve).catch(reject)
-                } else {
-                    reject(new Error('Token refresh failed'))
-                }
+        if (this.isRefreshing) {
+            // Wait for refresh to complete
+            return new Promise((resolve, reject) => {
+                this.subscribeTokenRefresh((status: string) => {
+                    if (status === 'refreshed') {
+                        this.request<T>(endpoint, options).then(resolve).catch(reject)
+                    } else {
+                        reject(new Error('Token refresh failed'))
+                    }
+                })
             })
-        })
+        }
+
+        this.isRefreshing = true
+
+        try {
+            // Try to refresh token
+            const refreshResponse = await fetch(`${this.baseUrl}/auth/refresh`, {
+                method: 'POST',
+                credentials: 'include',
+            })
+
+            if (!refreshResponse.ok) {
+                throw new Error('Refresh request failed')
+            }
+
+            this.onRefreshed('refreshed')
+            // Retry original request
+            return this.request<T>(endpoint, options)
+        } catch (error) {
+            this.onRefreshed('failed')
+
+            // Redirect to login only if it's not a generic failure
+            if (typeof window !== 'undefined' && !endpoint.includes('/user/consent')) {
+                window.location.href = '/login'
+            }
+
+            throw error
+        } finally {
+            this.isRefreshing = false
+        }
     }
 
     private subscribeTokenRefresh(callback: (status: string) => void) {

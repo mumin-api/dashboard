@@ -39,14 +39,13 @@ export default function RegisterPage() {
         try {
             await authApi.register({
                 email: formData.email,
-                password: formData.password,
                 acceptTerms: formData.acceptTerms,
                 termsVersion: '2.0',
                 acceptPrivacyPolicy: formData.acceptPrivacy,
                 privacyPolicyVersion: '1.0',
             })
 
-            router.push('/dashboard')
+            router.push('/login') // Redirect to login after getting the key (or showing it)
         } catch (err: any) {
             setError(err.message || 'Registration failed')
         } finally {

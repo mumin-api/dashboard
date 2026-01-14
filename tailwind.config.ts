@@ -50,6 +50,11 @@ const config: Config = {
                 ivory: '#fafaf9',
                 sand: '#f5f5f4',
                 charcoal: '#18181b',
+                border: 'rgba(6, 78, 59, 0.1)',
+                input: 'rgba(6, 78, 59, 0.05)',
+                ring: '#059669',
+                background: '#f5f5f4',
+                foreground: '#18181b',
             },
             fontFamily: {
                 display: ['Playfair Display', 'Amiri', 'serif'],

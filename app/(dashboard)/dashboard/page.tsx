@@ -23,7 +23,7 @@ export default function DashboardPage() {
                         As-salamu alaykum, <span className="text-gold-500">Ahmad</span>
                     </h1>
                     <p className="text-charcoal/60 mt-2 font-body">
-                        Here's what's happening with your API today
+                        Here&apos;s what&apos;s happening with your API today
                     </p>
                 </div>
 

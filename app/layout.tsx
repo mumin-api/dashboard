@@ -12,12 +12,12 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <head>
                 <title>Mumin Hadith API - Dashboard</title>
                 <meta name="description" content="Premium Islamic-themed dashboard for Mumin Hadith API" />
             </head>
-            <body>
+            <body suppressHydrationWarning>
                 <QueryClientProvider client={queryClient}>
                     {children}
                     <ToastContainer />
