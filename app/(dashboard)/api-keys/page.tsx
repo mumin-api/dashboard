@@ -1,9 +1,15 @@
 'use client'
 
+import { useState } from 'react'
 import { Key, Plus } from 'lucide-react'
 import { ApiKeyCard } from '@/components/dashboard/api-key-card'
+import { keysApi } from '@/lib/api/keys'
+import { toast } from '@/components/ui/toast'
 
 export default function ApiKeysPage() {
+    const [loading, setLoading] = useState(false)
+
+
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
@@ -14,10 +20,6 @@ export default function ApiKeysPage() {
                     </p>
                 </div>
 
-                <button className="px-6 py-3 bg-emerald-900 hover:bg-emerald-800 text-ivory rounded-lg font-accent flex items-center">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create New Key
-                </button>
             </div>
 
             <ApiKeyCard />

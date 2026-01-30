@@ -1,9 +1,57 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { User, Bell, Shield, Trash2 } from 'lucide-react'
 import { IslamicCard } from '@/components/islamic/islamic-card'
+import { authApi } from '@/lib/api/auth'
+import { toast } from '@/components/ui/toast'
 
 export default function SettingsPage() {
+    const [user, setUser] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const [saving, setSaving] = useState(false)
+    const [formData, setFormData] = useState({
+        email: '',
+        displayName: '',
+    })
+
+    useEffect(() => {
+        authApi.getCurrentUser()
+            .then((res: any) => {
+                const userData = res.user || res
+                setUser(userData)
+                setFormData({
+                    email: userData.email || '',
+                    displayName: userData.displayName || userData.firstName || '',
+                })
+            })
+            .catch(console.error)
+            .finally(() => setLoading(false))
+    }, [])
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setFormData(prev => ({ ...prev, [name]: value }))
+    }
+
+    const handleSaveProfile = async () => {
+        try {
+            setSaving(true)
+            await authApi.updateProfile(formData)
+            toast('Profile updated successfully!', 'success')
+            setTimeout(() => {
+                window.location.reload()
+            }, 1000)
+        } catch (error: any) {
+            console.error('Failed to update profile', error)
+            toast(error.message || 'Failed to update profile', 'error')
+        } finally {
+            setSaving(false)
+        }
+    }
+
+    if (loading) return <div className="p-8 text-center text-charcoal">Loading settings...</div>
+
     return (
         <div className="space-y-8">
             <div>
@@ -26,9 +74,10 @@ export default function SettingsPage() {
                             <label className="text-sm font-accent text-charcoal mb-2 block">Email</label>
                             <input
                                 type="email"
-                                value="ahmad@example.com"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
                                 className="w-full px-4 py-3 border border-emerald-900/20 rounded-lg focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20"
-                                readOnly
                             />
                         </div>
 
@@ -36,13 +85,20 @@ export default function SettingsPage() {
                             <label className="text-sm font-accent text-charcoal mb-2 block">Display Name</label>
                             <input
                                 type="text"
+                                name="displayName"
+                                value={formData.displayName}
+                                onChange={handleInputChange}
                                 placeholder="Your name"
                                 className="w-full px-4 py-3 border border-emerald-900/20 rounded-lg focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20"
                             />
                         </div>
 
-                        <button className="px-6 py-3 bg-emerald-900 hover:bg-emerald-800 text-ivory rounded-lg font-accent">
-                            Save Changes
+                        <button
+                            onClick={handleSaveProfile}
+                            disabled={saving}
+                            className="px-6 py-3 bg-emerald-900 hover:bg-emerald-800 disabled:opacity-50 text-ivory rounded-lg font-accent transition-all"
+                        >
+                            {saving ? 'Saving...' : 'Save Changes'}
                         </button>
                     </div>
                 </div>

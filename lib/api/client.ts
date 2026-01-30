@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3333/v1'
 
 class ApiClient {
     private baseUrl: string
@@ -31,12 +31,17 @@ class ApiClient {
             return this.handleUnauthorized(endpoint, options)
         }
 
+        const json = await response.json().catch(() => ({}));
+
         if (!response.ok) {
-            const error = await response.json().catch(() => ({}))
-            throw new Error(error.message || 'API request failed')
+            throw new Error(json.message || 'API request failed');
         }
 
-        return response.json()
+        if (json && typeof json === 'object' && json.success === true && 'data' in json) {
+            return json.data;
+        }
+
+        return json;
     }
 
     /**

@@ -1,28 +1,38 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { CreditCard, Download, Plus } from 'lucide-react'
 import { IslamicCard } from '@/components/islamic/islamic-card'
+import { billingApi } from '@/lib/api/billing'
 
 export default function BillingPage() {
-    const transactions = [
-        {
-            id: '1',
-            type: 'top_up',
-            amount: 10000,
-            cost: '$10.00',
-            date: '2024-01-10',
-            status: 'completed',
-        },
-        {
-            id: '2',
-            type: 'deduction',
-            amount: -1234,
-            description: 'API usage',
-            date: '2024-01-09',
-            status: 'completed',
-        },
-    ]
+    const [balance, setBalance] = useState<any>(null)
+    const [transactions, setTransactions] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [balanceData, txData] = await Promise.all([
+                    billingApi.getBalance(),
+                    billingApi.getTransactions()
+                ])
+                setBalance(balanceData)
+
+                // Handle various potential response structures
+                const txArray = (txData as any).data || (Array.isArray(txData) ? txData : [])
+                setTransactions(Array.isArray(txArray) ? txArray : [])
+            } catch (error) {
+                console.error('Failed to fetch billing data', error)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchData()
+    }, [])
+
+    if (loading) return <div className="p-8 text-center text-charcoal">Loading billing info...</div>
 
     return (
         <div className="space-y-8">
@@ -47,8 +57,10 @@ export default function BillingPage() {
                         <CreditCard className="w-8 h-8 text-gold-500" />
                     </div>
                     <h3 className="text-lg font-accent text-charcoal/60 mb-2">Current Balance</h3>
-                    <p className="text-5xl font-display text-emerald-900 mb-2">45,230</p>
-                    <p className="text-charcoal/60 font-body">credits (~$45.23)</p>
+                    <p className="text-5xl font-display text-emerald-900 mb-2">
+                        {(balance?.balance || 0).toLocaleString()}
+                    </p>
+                    <p className="text-charcoal/60 font-body">credits</p>
                 </div>
             </IslamicCard>
 
@@ -99,29 +111,32 @@ export default function BillingPage() {
                     </div>
 
                     <div className="space-y-3">
-                        {transactions.map((tx) => (
-                            <div
-                                key={tx.id}
-                                className="flex items-center justify-between p-4 border border-emerald-900/10 rounded-lg"
-                            >
-                                <div>
-                                    <p className="font-accent text-charcoal">
-                                        {tx.type === 'top_up' ? 'Credit Purchase' : 'API Usage'}
-                                    </p>
-                                    <p className="text-sm text-charcoal/60 font-body">{tx.date}</p>
-                                </div>
+                        {!Array.isArray(transactions) || transactions.length === 0 ? (
+                            <div className="text-center p-4 text-charcoal/60">No transactions found</div>
+                        ) : (
+                            transactions.map((tx) => (
+                                <div
+                                    key={tx.id}
+                                    className="flex items-center justify-between p-4 border border-emerald-900/10 rounded-lg"
+                                >
+                                    <div>
+                                        <p className="font-accent text-charcoal">
+                                            {tx.type === 'credit' ? 'Credit Purchase' : 'Usage Deduction'}
+                                        </p>
+                                        <p className="text-sm text-charcoal/60 font-body">
+                                            {new Date(tx.createdAt).toLocaleDateString()}
+                                        </p>
+                                    </div>
 
-                                <div className="text-right">
-                                    <p className={`font-accent ${tx.type === 'top_up' ? 'text-emerald-600' : 'text-charcoal'
-                                        }`}>
-                                        {tx.type === 'top_up' ? '+' : ''}{tx.amount.toLocaleString()} credits
-                                    </p>
-                                    {tx.cost && (
-                                        <p className="text-sm text-charcoal/60 font-body">{tx.cost}</p>
-                                    )}
+                                    <div className="text-right">
+                                        <p className={`font-accent ${tx.type === 'credit' ? 'text-emerald-600' : 'text-charcoal'
+                                            }`}>
+                                            {tx.type === 'credit' ? '+' : ''}{tx.amount.toLocaleString()} credits
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </div>
             </IslamicCard>

@@ -1,15 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Lock, ArrowRight } from 'lucide-react'
+import { Mail, Lock, ArrowRight, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { GeometricPattern } from '@/components/islamic/geometric-pattern'
 import { authApi } from '@/lib/api/auth'
 
 export default function LoginPage() {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -17,6 +18,15 @@ export default function LoginPage() {
     })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const [showVerifiedMessage, setShowVerifiedMessage] = useState(false)
+
+    useEffect(() => {
+        if (searchParams.get('verified') === 'true') {
+            setShowVerifiedMessage(true)
+            // Hide message after 5 seconds
+            setTimeout(() => setShowVerifiedMessage(false), 5000)
+        }
+    }, [searchParams])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -31,6 +41,14 @@ export default function LoginPage() {
 
             router.push('/dashboard')
         } catch (err: any) {
+            // Check if email is not verified
+            const errorCode = err.response?.data?.error || err.error
+            if (errorCode === 'EMAIL_NOT_VERIFIED') {
+                const userEmail = err.response?.data?.email || formData.email
+                router.push(`/verify-email?email=${encodeURIComponent(userEmail)}`)
+                return
+            }
+
             setError(err.message || 'Login failed')
         } finally {
             setLoading(false)
@@ -61,6 +79,15 @@ export default function LoginPage() {
                     <p className="text-charcoal/60 mb-8 font-body">
                         Sign in to access your dashboard
                     </p>
+
+                    {showVerifiedMessage && (
+                        <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center space-x-3 animate-in fade-in slide-in-from-top-4">
+                            <CheckCircle className="w-5 h-5 text-emerald-600" />
+                            <span className="text-emerald-800 text-sm font-accent">
+                                Email verified successfully! You can now log in.
+                            </span>
+                        </div>
+                    )}
 
                     {error && (
                         <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-600 text-sm">

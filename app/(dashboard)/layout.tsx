@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -13,8 +13,11 @@ import {
     LogOut,
     Menu,
     X,
+    ChevronDown,
 } from 'lucide-react'
 import { GeometricPattern } from '@/components/islamic/geometric-pattern'
+import { authApi } from '@/lib/api/auth'
+import { billingApi } from '@/lib/api/billing'
 
 const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -31,11 +34,28 @@ export default function DashboardLayout({
 }) {
     const pathname = usePathname()
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const [user, setUser] = useState<any>(null)
+    const [balance, setBalance] = useState<number | null>(null)
+
+    useEffect(() => {
+        const fetchHeaderData = async () => {
+            try {
+                const userRes: any = await authApi.getCurrentUser()
+                setUser(userRes.user || userRes)
+
+                const balanceRes: any = await billingApi.getBalance()
+                setBalance(balanceRes?.balance ?? 0)
+            } catch (error) {
+                console.error('Failed to fetch header data', error)
+            }
+        }
+        fetchHeaderData()
+    }, [pathname]) // Refetch on navigation to keep it fresh
 
     return (
         <div className="min-h-screen bg-sand">
             {/* Background Pattern */}
-            <div className="fixed inset-0 opacity-[0.02]">
+            <div className="fixed inset-0 opacity-[0.02] pointer-events-none">
                 <GeometricPattern />
             </div>
 
@@ -85,7 +105,9 @@ export default function DashboardLayout({
 
                 {/* Logout Button */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-emerald-900/10">
-                    <button className="w-full flex items-center space-x-3 px-4 py-3 text-charcoal hover:text-rose-600 hover:bg-rose-50 rounded-lg font-accent transition-colors">
+                    <button
+                        onClick={() => authApi.logout().then(() => window.location.href = '/login')}
+                        className="w-full flex items-center space-x-3 px-4 py-3 text-charcoal hover:text-rose-600 hover:bg-rose-50 rounded-lg font-accent transition-colors">
                         <LogOut className="w-5 h-5" />
                         <span>Logout</span>
                     </button>
@@ -114,16 +136,30 @@ export default function DashboardLayout({
 
                         <div className="flex items-center space-x-4 ml-auto">
                             {/* Balance Display */}
-                            <div className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-emerald-50 rounded-lg">
+                            <div className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-emerald-50 rounded-lg border border-emerald-100">
                                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                                 <span className="text-sm font-accent text-emerald-900">
-                                    45,230 credits
+                                    {balance !== null ? balance.toLocaleString() : '...'} tokens
                                 </span>
                             </div>
 
-                            {/* User Avatar */}
-                            <div className="w-10 h-10 bg-gradient-islamic rounded-full flex items-center justify-center text-ivory font-display">
-                                A
+                            {/* User Info */}
+                            <div className="flex items-center space-x-3 pl-4 border-l border-emerald-900/10">
+                                <div className="hidden md:block text-right">
+                                    <p className="text-sm font-accent text-emerald-900 leading-none mb-1">
+                                        {user?.displayName || 'Loading...'}
+                                    </p>
+                                    <p className="text-xs font-body text-charcoal/60 leading-none">
+                                        {user?.email || ''}
+                                    </p>
+                                </div>
+
+                                <div className="w-10 h-10 bg-gradient-islamic rounded-full flex items-center justify-center text-ivory font-display shadow-glow-gold relative overflow-hidden group">
+                                    <span className="relative z-10">
+                                        {(user?.displayName || user?.firstName || 'A')[0].toUpperCase()}
+                                    </span>
+                                    <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>
                             </div>
                         </div>
                     </div>

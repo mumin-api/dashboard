@@ -1,0 +1,73 @@
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+export async function middleware(request: NextRequest) {
+    const { pathname } = request.nextUrl
+
+    // Get token from cookies
+    const token = request.cookies.get('access_token')?.value
+
+    // Define protected routes
+    const isDashboard = pathname.startsWith('/dashboard')
+    const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register')
+
+    // 1. If no token, protect dashboard
+    if (!token) {
+        if (isDashboard) {
+            return NextResponse.redirect(new URL('/login', request.url))
+        }
+        return NextResponse.next()
+    }
+
+    // 2. If token exists, validate it with backend
+    try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/v1'
+        const res = await fetch(`${apiUrl}/auth/me`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                // Pass cookie if needed for cookie-based auth backend check
+                // 'Cookie': `access_token=${token}` 
+            }
+        })
+
+        if (!res.ok) {
+            // Token is invalid/expired
+            const response = NextResponse.redirect(new URL('/login', request.url))
+            response.cookies.delete('access_token')
+            response.cookies.delete('refresh_token')
+            response.cookies.delete('logged_in')
+            return response
+        }
+
+        // Token is valid
+        if (isAuthPage) {
+            // Redirect logged-in user away from auth pages
+            return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
+
+        return NextResponse.next()
+
+    } catch (error) {
+        // Network error or backend down - fail safe to allow (or block depending on policy)
+        // For security, checking /me failure usually means treat as unauthenticated
+        console.error('Middleware auth check failed', error)
+        if (isDashboard) {
+            return NextResponse.redirect(new URL('/login', request.url))
+        }
+        return NextResponse.next()
+    }
+}
+
+export const config = {
+    matcher: [
+        /*
+         * Match all request paths except for the ones starting with:
+         * - api (API routes)
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico (favicon file)
+         * - images (public images)
+         */
+        '/((?!api|_next/static|_next/image|favicon.ico|images).*)',
+    ],
+}

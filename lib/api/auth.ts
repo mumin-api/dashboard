@@ -2,6 +2,9 @@ import { apiClient } from './client'
 
 interface RegisterData {
     email: string
+    password?: string
+    firstName?: string
+    lastName?: string
     acceptTerms: boolean
     termsVersion: string
     acceptPrivacyPolicy: boolean
