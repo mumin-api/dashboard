@@ -77,4 +77,11 @@ export const authApi = {
     async changePassword(data: { currentPassword: string; newPassword: string }) {
         return apiClient.patch('/auth/password', data)
     },
+
+    /**
+     * Link Telegram Account
+     */
+    async claimTelegram(token: string) {
+        return apiClient.post('/auth/telegram/claim', { token })
+    },
 }

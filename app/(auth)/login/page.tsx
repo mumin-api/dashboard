@@ -39,7 +39,8 @@ export default function LoginPage() {
                 password: formData.password,
             })
 
-            router.push('/dashboard')
+            const returnUrl = searchParams.get('returnUrl') || '/dashboard'
+            router.push(returnUrl)
         } catch (err: any) {
             // Check if email is not verified
             const errorCode = err.response?.data?.error || err.error
