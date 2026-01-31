@@ -193,7 +193,7 @@ export function ApiKeyCard() {
                                                 copyToClipboard(newFullKey)
                                             } else {
                                                 copyToClipboard(key.keyPrefix)
-                                                toast('Only prefix copied. Key is secret.', 'warning')
+                                                toast('Only prefix copied. Key is secret.', 'info')
                                             }
                                         }}
                                     >

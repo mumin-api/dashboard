@@ -430,7 +430,7 @@ export default function RegisterPage() {
                             </button>
 
                             <p className="text-xs text-center text-charcoal/40 mt-6 font-body">
-                                Didn't receive the code? Check your spam folder.
+                                Didn&apos;t receive the code? Check your spam folder.
                             </p>
                         </motion.div>
                     )}

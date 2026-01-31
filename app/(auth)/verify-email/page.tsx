@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Mail, RefreshCw, CheckCircle, AlertCircle, Clock } from 'lucide-react'
@@ -8,7 +8,7 @@ import { IslamicCard } from '@/components/islamic/islamic-card'
 import { apiClient } from '@/lib/api/client'
 import { toast } from '@/components/ui/toast'
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const emailParam = searchParams?.get('email')
@@ -231,7 +231,7 @@ export default function VerifyEmailPage() {
                                 {code.map((digit, index) => (
                                     <input
                                         key={index}
-                                        ref={(el) => (inputRefs.current[index] = el)}
+                                        ref={(el) => { inputRefs.current[index] = el }}
                                         type="text"
                                         inputMode="numeric"
                                         maxLength={1}
@@ -275,12 +275,20 @@ export default function VerifyEmailPage() {
 
                             {/* Help Text */}
                             <p className="text-xs text-center text-charcoal/40 mt-6 font-body">
-                                Didn't receive the code? Check your spam folder or click resend.
+                                Didn&apos;t receive the code? Check your spam folder or click resend.
                             </p>
                         </div>
                     </IslamicCard>
                 </motion.div>
             </div>
         </div>
+    )
+}
+
+export default function VerifyEmailPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-sand flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-900"></div></div>}>
+            <VerifyEmailContent />
+        </Suspense>
     )
 }

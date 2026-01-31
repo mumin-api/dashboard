@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { authApi } from '@/lib/api/auth'
 import { GeometricPattern } from '@/components/islamic/geometric-pattern'
 
-export default function TelegramAuthPage() {
+function TelegramAuthContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const token = searchParams.get('token')
@@ -119,5 +119,13 @@ export default function TelegramAuthPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function TelegramAuthPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-ivory flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-900"></div></div>}>
+            <TelegramAuthContent />
+        </Suspense>
     )
 }
