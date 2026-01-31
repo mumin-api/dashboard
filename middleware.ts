@@ -22,15 +22,16 @@ export async function middleware(request: NextRequest) {
     // 2. If token exists, validate it with backend
     try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/v1'
+        console.log(`[Middleware] Validating token for ${pathname} at ${apiUrl}`)
+        
         const res = await fetch(`${apiUrl}/auth/me`, {
             headers: {
                 Authorization: `Bearer ${token}`,
-                // Pass cookie if needed for cookie-based auth backend check
-                // 'Cookie': `access_token=${token}` 
             }
         })
 
         if (!res.ok) {
+            console.log(`[Middleware] Auth check failed: ${res.status} for ${pathname}`)
             // Token is invalid/expired
             const response = NextResponse.redirect(new URL('/login', request.url))
             response.cookies.delete('access_token')
@@ -39,18 +40,19 @@ export async function middleware(request: NextRequest) {
             return response
         }
 
+        const userData = await res.json()
+        console.log(`[Middleware] Auth success for ${userData.email || 'user'}`)
+
         // Token is valid
         if (isAuthPage) {
-            // Redirect logged-in user away from auth pages
+            console.log(`[Middleware] Redirecting from auth page ${pathname} to /dashboard`)
             return NextResponse.redirect(new URL('/dashboard', request.url))
         }
 
         return NextResponse.next()
 
     } catch (error) {
-        // Network error or backend down - fail safe to allow (or block depending on policy)
-        // For security, checking /me failure usually means treat as unauthenticated
-        console.error('Middleware auth check failed', error)
+        console.error(`[Middleware] Error during auth check for ${pathname}:`, error)
         if (isDashboard) {
             return NextResponse.redirect(new URL('/login', request.url))
         }
