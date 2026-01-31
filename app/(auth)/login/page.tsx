@@ -40,7 +40,7 @@ function LoginContent() {
             })
 
             const returnUrl = searchParams.get('returnUrl') || '/dashboard'
-            router.push(returnUrl)
+            window.location.href = returnUrl
         } catch (err: any) {
             // Check if email is not verified
             const errorCode = err.response?.data?.error || err.error

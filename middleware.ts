@@ -21,9 +21,14 @@ export async function middleware(request: NextRequest) {
 
     // 2. If token exists, validate it with backend
     try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/v1'
+        // In production on Railway, we might need to use a private network URL or the public one correctly
+        const apiUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/v1'
         console.log(`[Middleware] Validating token for ${pathname} at ${apiUrl}`)
         
+        if (apiUrl.includes('localhost') && process.env.NODE_ENV === 'production') {
+            console.warn('[Middleware] WARNING: Using localhost API URL in production environment!')
+        }
+
         const res = await fetch(`${apiUrl}/auth/me`, {
             headers: {
                 Authorization: `Bearer ${token}`,
