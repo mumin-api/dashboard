@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
     // 1. If no token, protect dashboard
     if (!token) {
         if (isDashboard) {
-            return NextResponse.redirect(new URL('/login', request.url))
+            return NextResponse.redirect(new URL('/login?reason=no_token', request.url))
         }
         return NextResponse.next()
     }
@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
         if (!res.ok) {
             console.log(`[Middleware] Auth check failed: ${res.status} for ${pathname}`)
             // Token is invalid/expired
-            const response = NextResponse.redirect(new URL('/login', request.url))
+            const response = NextResponse.redirect(new URL(`/login?reason=auth_failed&status=${res.status}`, request.url))
             response.cookies.delete('access_token')
             response.cookies.delete('refresh_token')
             response.cookies.delete('logged_in')
@@ -56,10 +56,10 @@ export async function middleware(request: NextRequest) {
 
         return NextResponse.next()
 
-    } catch (error) {
+    } catch (error: any) {
         console.error(`[Middleware] Error during auth check for ${pathname}:`, error)
         if (isDashboard) {
-            return NextResponse.redirect(new URL('/login', request.url))
+            return NextResponse.redirect(new URL(`/login?reason=middleware_error&msg=${encodeURIComponent(error.message || 'unknown')}`, request.url))
         }
         return NextResponse.next()
     }

@@ -21,6 +21,16 @@ function LoginContent() {
     const [showVerifiedMessage, setShowVerifiedMessage] = useState(false)
 
     useEffect(() => {
+        const reason = searchParams.get('reason')
+        const msg = searchParams.get('msg')
+        if (reason) {
+            let errorMsg = `Auth error: ${reason}`
+            if (reason === 'no_token') errorMsg = 'Your browser didn&apos;t send the authentication cookie. This usually means a domain mismatch.'
+            if (reason === 'middleware_error') errorMsg = `Connection to API failed: ${msg || 'Unknown error'}`
+            if (reason === 'auth_failed') errorMsg = `Session invalid (Status: ${searchParams.get('status')})`
+            setError(errorMsg)
+        }
+
         if (searchParams.get('verified') === 'true') {
             setShowVerifiedMessage(true)
             // Hide message after 5 seconds
