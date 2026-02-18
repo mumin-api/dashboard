@@ -14,35 +14,24 @@ export function IslamicCard({
     children,
     className = '',
     hover = true,
-    glow = false
+    glow = false,
 }: IslamicCardProps) {
     return (
         <motion.div
-            whileHover={hover ? { y: -4 } : {}}
-            transition={{ duration: 0.3 }}
-            className={`
-        relative overflow-hidden
-        bg-white/90 backdrop-blur-sm
-        border border-emerald-900/10
-        rounded-2xl
-        ${glow ? 'shadow-glow-emerald' : 'shadow-islamic'}
-        ${hover ? 'hover:border-gold-500/30 hover:shadow-glow-gold' : ''}
-        transition-all duration-300
-        ${className}
-      `}
+            whileHover={hover ? { y: -2 } : {}}
+            transition={{ duration: 0.25 }}
+            className={`relative overflow-hidden rounded-2xl transition-all duration-300 ${className}`}
+            style={{
+                backgroundColor: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.07)',
+                boxShadow: glow
+                    ? '0 0 30px rgba(5,150,105,0.15)'
+                    : '0 4px 24px rgba(0,0,0,0.3)',
+            }}
         >
-            {/* Decorative corner */}
-            <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
-                <svg viewBox="0 0 100 100" className="w-full h-full text-emerald-900">
-                    <path
-                        d="M0,0 L100,0 L100,100 Z"
-                        fill="currentColor"
-                    />
-                    <circle cx="85" cy="15" r="3" fill="white" />
-                    <circle cx="70" cy="30" r="3" fill="white" />
-                    <circle cx="55" cy="45" r="3" fill="white" />
-                </svg>
-            </div>
+            {/* Subtle top accent */}
+            <div className="absolute top-0 left-0 right-0 h-px"
+                style={{ background: 'linear-gradient(90deg, transparent, rgba(5,150,105,0.3), transparent)' }} />
 
             {children}
         </motion.div>

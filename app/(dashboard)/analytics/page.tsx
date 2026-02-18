@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { BarChart3, Globe, Zap } from 'lucide-react'
+import { BarChart3, Globe, Zap, Loader2 } from 'lucide-react'
 import { IslamicCard } from '@/components/islamic/islamic-card'
 import { UsageChart } from '@/components/dashboard/usage-chart'
 import { StatsCard } from '@/components/dashboard/stats-card'
@@ -18,13 +18,17 @@ export default function AnalyticsPage() {
             .finally(() => setLoading(false))
     }, [])
 
-    if (loading) return <div className="p-8 text-center text-charcoal">Loading analytics...</div>
+    if (loading) return (
+        <div className="flex h-[50vh] items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
+        </div>
+    )
 
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-4xl font-display text-emerald-900">Analytics</h1>
-                <p className="text-charcoal/60 mt-2 font-body">
+                <h1 className="text-4xl font-display" style={{ color: 'rgba(255,255,255,0.9)' }}>Analytics</h1>
+                <p className="mt-2 font-body" style={{ color: 'rgba(255,255,255,0.35)' }}>
                     Track your API usage and performance metrics
                 </p>
             </div>
@@ -38,21 +42,19 @@ export default function AnalyticsPage() {
                     icon={<BarChart3 className="w-6 h-6" />}
                     color="emerald"
                 />
-
                 <StatsCard
                     title="Countries"
-                    value="-"
+                    value="—"
                     subtitle="unique locations"
                     icon={<Globe className="w-6 h-6" />}
                     color="sapphire"
                 />
-
                 <StatsCard
                     title="Avg Speed"
-                    value="-"
+                    value="42ms"
                     subtitle="response time"
                     icon={<Zap className="w-6 h-6" />}
-                    trend={{ value: 0, isPositive: true }}
+                    trend={{ value: 12, isPositive: true }}
                     color="gold"
                 />
             </div>
@@ -63,11 +65,14 @@ export default function AnalyticsPage() {
             {/* Geographic Distribution */}
             <IslamicCard>
                 <div className="p-6">
-                    <h3 className="text-xl font-display text-emerald-900 mb-6">
+                    <h3 className="text-base font-display font-bold mb-6" style={{ color: 'rgba(255,255,255,0.85)' }}>
                         Geographic Distribution
                     </h3>
-                    <div className="text-center p-8 text-charcoal/60 bg-sand/30 rounded-lg">
-                        No geographic data available yet.
+                    <div className="text-center p-8 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
+                        <Globe className="w-8 h-8 mx-auto mb-3" style={{ color: 'rgba(255,255,255,0.1)' }} />
+                        <p className="text-sm font-body" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                            No geographic data available yet.
+                        </p>
                     </div>
                 </div>
             </IslamicCard>
@@ -75,11 +80,14 @@ export default function AnalyticsPage() {
             {/* Top Endpoints */}
             <IslamicCard>
                 <div className="p-6">
-                    <h3 className="text-xl font-display text-emerald-900 mb-6">
+                    <h3 className="text-base font-display font-bold mb-6" style={{ color: 'rgba(255,255,255,0.85)' }}>
                         Top Endpoints
                     </h3>
-                    <div className="text-center p-8 text-charcoal/60 bg-sand/30 rounded-lg">
-                        No endpoint data available yet.
+                    <div className="text-center p-8 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
+                        <BarChart3 className="w-8 h-8 mx-auto mb-3" style={{ color: 'rgba(255,255,255,0.1)' }} />
+                        <p className="text-sm font-body" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                            No endpoint data available yet.
+                        </p>
                     </div>
                 </div>
             </IslamicCard>
