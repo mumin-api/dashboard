@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { IslamicCard } from '@/components/islamic/islamic-card'
-import { billingApi } from '@/lib/api/billing'
 import { analyticsApi } from '@/lib/api/analytics'
 import { Loader2, TrendingUp } from 'lucide-react'
 import type { UsageStats } from '@/types/api'
@@ -32,39 +31,19 @@ export function UsageChart() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Try analytics endpoint first
                 const stats = await analyticsApi.getUsageStats(7)
-                if (stats && stats.length > 0) {
+                if (Array.isArray(stats) && stats.length > 0) {
                     setData(stats)
                     const today = stats[stats.length - 1]?.requests ?? 0
                     setTotalToday(today)
-                    return
                 }
             } catch {
-                // Analytics endpoint may not exist yet — fall back to balance data
-            }
-
-            try {
-                const balance: any = await billingApi.getBalance()
-                // Build synthetic 7-day data from available stats
-                const dates = getLast7DaysDates()
-                const labels = getLast7Days()
-                const todayRequests = balance?.requestsToday ?? 0
-                // Distribute total requests across days with today's actual count
-                const total = balance?.totalRequests ?? 0
-                const syntheticData: UsageStats[] = dates.map((date, i) => ({
-                    date,
-                    requests: i === 6 ? todayRequests : Math.floor(Math.random() * Math.max(todayRequests, 1) * 0.8),
-                }))
-                setData(syntheticData)
-                setTotalToday(todayRequests)
-            } catch {
-                // No data available
+                // Endpoint not available or error — show empty state
             } finally {
                 setLoading(false)
             }
         }
-        fetchData().finally(() => setLoading(false))
+        fetchData()
     }, [])
 
     const labels = getLast7Days()
