@@ -1,4 +1,5 @@
-const withNextIntl = require('next-intl/plugin')();
+const createNextIntlPlugin = require('next-intl/plugin');
+const withNextIntl = createNextIntlPlugin();
 const withMDX = require('@next/mdx')()
 
 /** @type {import('next').NextConfig} */
