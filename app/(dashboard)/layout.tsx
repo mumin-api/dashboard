@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
     LayoutDashboard,
     Key,
@@ -13,7 +13,8 @@ import {
     LogOut,
     Menu,
     X,
-    ChevronDown,
+    Coins,
+    ChevronRight,
 } from 'lucide-react'
 import { GeometricPattern } from '@/components/islamic/geometric-pattern'
 import { authApi } from '@/lib/api/auth'
@@ -27,11 +28,7 @@ const navItems = [
     { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
-export default function DashboardLayout({
-    children,
-}: {
-    children: React.ReactNode
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [user, setUser] = useState<any>(null)
@@ -42,7 +39,6 @@ export default function DashboardLayout({
             try {
                 const userRes: any = await authApi.getCurrentUser()
                 setUser(userRes.user || userRes)
-
                 const balanceRes: any = await billingApi.getBalance()
                 setBalance(balanceRes?.balance ?? 0)
             } catch (error) {
@@ -50,35 +46,50 @@ export default function DashboardLayout({
             }
         }
         fetchHeaderData()
-    }, [pathname]) // Refetch on navigation to keep it fresh
+    }, [pathname])
+
+    const initials = (user?.displayName || user?.firstName || 'A')[0].toUpperCase()
 
     return (
-        <div className="min-h-screen bg-sand">
+        <div className="min-h-screen" style={{ backgroundColor: '#0a0f0d' }}>
             {/* Background Pattern */}
-            <div className="fixed inset-0 opacity-[0.02] pointer-events-none">
+            <div className="fixed inset-0 opacity-[0.025] pointer-events-none">
                 <GeometricPattern />
             </div>
+            {/* Ambient glow */}
+            <div className="fixed top-0 left-0 w-96 h-96 rounded-full pointer-events-none"
+                style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.08) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+            <div className="fixed bottom-0 right-0 w-96 h-96 rounded-full pointer-events-none"
+                style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.05) 0%, transparent 70%)', filter: 'blur(40px)' }} />
 
-            {/* Sidebar */}
-            <aside
-                className={`
-          fixed top-0 left-0 h-full w-64 bg-white border-r border-emerald-900/10
-          transform transition-transform duration-300 z-50
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        `}
+            {/* ── SIDEBAR ─────────────────────────────────────────────────── */}
+            <aside className={`
+                fixed top-0 left-0 h-full w-64 z-50 flex flex-col
+                transform transition-transform duration-300
+                ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            `}
+                style={{
+                    backgroundColor: 'rgba(10,15,13,0.95)',
+                    borderRight: '1px solid rgba(255,255,255,0.06)',
+                    backdropFilter: 'blur(20px)',
+                }}
             >
                 {/* Logo */}
-                <div className="p-6 border-b border-emerald-900/10">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-emerald-900 rounded-lg flex items-center justify-center">
+                <div className="p-6 border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+                            style={{ background: 'linear-gradient(135deg, #064e3b, #059669)' }}>
                             <span className="text-gold-400 font-display text-xl">م</span>
                         </div>
-                        <span className="text-emerald-900 font-display text-xl">Mumin API</span>
+                        <div>
+                            <span className="text-ivory font-display text-lg leading-none block">Mumin API</span>
+                            <span className="text-[10px] font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>Developer Console</span>
+                        </div>
                     </div>
                 </div>
 
                 {/* Navigation */}
-                <nav className="p-4 space-y-2">
+                <nav className="flex-1 p-4 space-y-1">
                     {navItems.map((item) => {
                         const Icon = item.icon
                         const isActive = pathname === item.href
@@ -87,78 +98,112 @@ export default function DashboardLayout({
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className={`
-                  flex items-center space-x-3 px-4 py-3 rounded-lg
-                  font-accent transition-all
-                  ${isActive
-                                        ? 'bg-emerald-900 text-ivory shadow-glow-emerald'
-                                        : 'text-charcoal hover:bg-emerald-50 hover:text-emerald-900'
-                                    }
-                `}
+                                onClick={() => setSidebarOpen(false)}
+                                className="relative flex items-center gap-3 px-4 py-3 rounded-xl font-accent text-sm transition-all duration-200 group"
+                                style={{
+                                    backgroundColor: isActive ? 'rgba(5,150,105,0.15)' : 'transparent',
+                                    color: isActive ? '#34d399' : 'rgba(255,255,255,0.5)',
+                                    border: isActive ? '1px solid rgba(5,150,105,0.25)' : '1px solid transparent',
+                                }}
                             >
-                                <Icon className="w-5 h-5" />
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="activeNav"
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-full"
+                                        style={{ background: 'linear-gradient(180deg, #34d399, #059669)' }}
+                                    />
+                                )}
+                                <Icon className="w-4 h-4 flex-shrink-0" />
                                 <span>{item.label}</span>
+                                {isActive && <ChevronRight className="w-3 h-3 ml-auto opacity-50" />}
                             </Link>
                         )
                     })}
                 </nav>
 
-                {/* Logout Button */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-emerald-900/10">
+                {/* Balance pill */}
+                {balance !== null && (
+                    <div className="mx-4 mb-4 p-4 rounded-xl border"
+                        style={{ backgroundColor: 'rgba(245,158,11,0.06)', borderColor: 'rgba(245,158,11,0.15)' }}>
+                        <div className="flex items-center gap-2 mb-1">
+                            <Coins className="w-4 h-4 text-gold-400" />
+                            <span className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>Balance</span>
+                        </div>
+                        <p className="text-2xl font-display text-gold-400">{balance.toLocaleString()}</p>
+                        <p className="text-[10px] font-body mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>API credits remaining</p>
+                    </div>
+                )}
+
+                {/* Logout */}
+                <div className="p-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
                     <button
                         onClick={() => authApi.logout().then(() => window.location.href = '/login')}
-                        className="w-full flex items-center space-x-3 px-4 py-3 text-charcoal hover:text-rose-600 hover:bg-rose-50 rounded-lg font-accent transition-colors">
-                        <LogOut className="w-5 h-5" />
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-accent text-sm transition-all"
+                        style={{ color: 'rgba(255,255,255,0.35)' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.08)' }}
+                        onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.35)'; e.currentTarget.style.backgroundColor = 'transparent' }}
+                    >
+                        <LogOut className="w-4 h-4" />
                         <span>Logout</span>
                     </button>
                 </div>
             </aside>
 
-            {/* Mobile Sidebar Overlay */}
-            {sidebarOpen && (
-                <div
-                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-                    onClick={() => setSidebarOpen(false)}
-                />
-            )}
+            {/* Mobile overlay */}
+            <AnimatePresence>
+                {sidebarOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
+                        onClick={() => setSidebarOpen(false)}
+                    />
+                )}
+            </AnimatePresence>
 
-            {/* Main Content */}
+            {/* ── MAIN CONTENT ────────────────────────────────────────────── */}
             <div className="lg:pl-64">
                 {/* Top Bar */}
-                <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-sm border-b border-emerald-900/10">
+                <header className="sticky top-0 z-30 border-b"
+                    style={{ backgroundColor: 'rgba(10,15,13,0.8)', borderColor: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)' }}>
                     <div className="flex items-center justify-between px-6 py-4">
                         <button
-                            className="lg:hidden p-2 hover:bg-sand rounded-lg"
+                            className="lg:hidden p-2 rounded-lg transition-colors"
+                            style={{ color: 'rgba(255,255,255,0.5)' }}
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                         >
-                            {sidebarOpen ? <X /> : <Menu />}
+                            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                         </button>
 
-                        <div className="flex items-center space-x-4 ml-auto">
-                            {/* Balance Display */}
-                            <div className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-emerald-50 rounded-lg border border-emerald-100">
-                                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                                <span className="text-sm font-accent text-emerald-900">
-                                    {balance !== null ? balance.toLocaleString() : '...'} tokens
-                                </span>
+                        {/* Page breadcrumb */}
+                        <div className="hidden lg:flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                            <span>Console</span>
+                            <ChevronRight className="w-3 h-3" />
+                            <span className="text-ivory/70">{navItems.find(n => n.href === pathname)?.label || 'Dashboard'}</span>
+                        </div>
+
+                        <div className="flex items-center gap-4 ml-auto">
+                            {/* Balance chip */}
+                            <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-accent"
+                                style={{ backgroundColor: 'rgba(5,150,105,0.08)', borderColor: 'rgba(5,150,105,0.2)', color: '#34d399' }}>
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                {balance !== null ? balance.toLocaleString() : '...'} tokens
                             </div>
 
-                            {/* User Info */}
-                            <div className="flex items-center space-x-3 pl-4 border-l border-emerald-900/10">
+                            {/* User */}
+                            <div className="flex items-center gap-3 pl-4 border-l" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
                                 <div className="hidden md:block text-right">
-                                    <p className="text-sm font-accent text-emerald-900 leading-none mb-1">
+                                    <p className="text-sm font-accent text-ivory/80 leading-none mb-1">
                                         {user?.displayName || 'Loading...'}
                                     </p>
-                                    <p className="text-xs font-body text-charcoal/60 leading-none">
+                                    <p className="text-xs font-body leading-none" style={{ color: 'rgba(255,255,255,0.3)' }}>
                                         {user?.email || ''}
                                     </p>
                                 </div>
-
-                                <div className="w-10 h-10 bg-gradient-islamic rounded-full flex items-center justify-center text-ivory font-display shadow-glow-gold relative overflow-hidden group">
-                                    <span className="relative z-10">
-                                        {(user?.displayName || user?.firstName || 'A')[0].toUpperCase()}
-                                    </span>
-                                    <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-display text-emerald-900 shadow-lg"
+                                    style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
+                                    {initials}
                                 </div>
                             </div>
                         </div>
@@ -168,9 +213,9 @@ export default function DashboardLayout({
                 {/* Page Content */}
                 <main className="relative p-6 lg:p-8">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.4 }}
                     >
                         {children}
                     </motion.div>

@@ -10,6 +10,9 @@
     --sapphire-900: #1e3a8a;
     --ivory: #fafaf9;
     --charcoal: #18181b;
+    --dashboard-bg: #060d0a;
+    --dashboard-surface: rgba(255,255,255,0.03);
+    --dashboard-border: rgba(255,255,255,0.07);
   }
 
   * {
@@ -17,25 +20,34 @@
   }
 
   body {
-    @apply bg-sand text-charcoal font-body antialiased;
+    font-family: 'Inter', 'Cairo', sans-serif;
+    background-color: #060d0a;
+    color: rgba(255,255,255,0.8);
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Custom scrollbar */
+  /* Premium dark scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-sand;
+    background: rgba(255,255,255,0.02);
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-emerald-900/20 rounded-full;
+    background: rgba(5,150,105,0.25);
+    border-radius: 999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-emerald-900/40;
+    background: rgba(5,150,105,0.45);
+  }
+
+  /* Input placeholder */
+  ::placeholder {
+    color: rgba(255,255,255,0.2);
   }
 }
 
