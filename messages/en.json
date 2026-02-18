@@ -6,7 +6,8 @@
     "search": "Search...",
     "noData": "No data available",
     "error": "An error occurred",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "verificationCodeSent": "Verification code sent to your email"
   },
   "Dashboard": {
     "title": "API Dashboard",
@@ -118,8 +119,20 @@
       "email": "Email",
       "displayName": "Display Name",
       "placeholder": "Your name",
-      "updated": "Profile updated successfully!",
-      "fail": "Failed to update profile"
+      "success": "Profile updated successfully.",
+      "fail": "Failed to update profile.",
+      "emailChange": {
+          "title": "Verify New Email",
+          "description": "A 6-digit verification code has been sent to {email}. Please enter it below to confirm the change.",
+          "placeholder": "Enter 6-digit code",
+          "verifying": "Verifying...",
+          "verify": "Verify & Change",
+          "cancel": "Cancel",
+          "resend": "Resend Code",
+          "resendIn": "Resend in {seconds}s",
+          "success": "Email changed successfully! Please log in again with your new email.",
+          "error": "Invalid or expired code."
+      }
     },
     "apiPref": {
       "title": "API Preferences",

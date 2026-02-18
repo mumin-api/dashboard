@@ -84,4 +84,18 @@ export const authApi = {
     async claimTelegram(token: string) {
         return apiClient.post('/auth/telegram/claim', { token })
     },
+    
+    /**
+     * Request Email Change
+     */
+    async requestEmailChange(newEmail: string) {
+        return apiClient.post('/auth/request-email-change', { newEmail })
+    },
+
+    /**
+     * Verify Email Change
+     */
+    async verifyEmailChange(code: string) {
+        return apiClient.post('/auth/verify-email-change', { code })
+    },
 }
