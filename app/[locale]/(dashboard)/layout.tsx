@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { Link, usePathname } from '@/lib/navigation' // Use localized Link and pathname
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslations, useLocale } from 'next-intl'
 import {
     LayoutDashboard,
     Key,
@@ -19,20 +19,25 @@ import {
 import { GeometricPattern } from '@/components/islamic/geometric-pattern'
 import { authApi } from '@/lib/api/auth'
 import { billingApi } from '@/lib/api/billing'
-
-const navItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/api-keys', label: 'API Keys', icon: Key },
-    { href: '/billing', label: 'Billing', icon: CreditCard },
-    { href: '/analytics', label: 'Analytics', icon: BarChart3 },
-    { href: '/settings', label: 'Settings', icon: Settings },
-]
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
+    const t = useTranslations('Sidebar')
+    const td = useTranslations('Dashboard')
+    const locale = useLocale()
+    
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [user, setUser] = useState<any>(null)
     const [balance, setBalance] = useState<number | null>(null)
+
+    const navItems = [
+        { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard },
+        { href: '/api-keys', label: t('apiKeys'), icon: Key },
+        { href: '/billing', label: t('billing'), icon: CreditCard },
+        { href: '/analytics', label: t('analytics'), icon: BarChart3 },
+        { href: '/settings', label: t('settings'), icon: Settings },
+    ]
 
     useEffect(() => {
         const fetchHeaderData = async () => {
@@ -127,24 +132,33 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         style={{ backgroundColor: 'rgba(245,158,11,0.06)', borderColor: 'rgba(245,158,11,0.15)' }}>
                         <div className="flex items-center gap-2 mb-1">
                             <Coins className="w-4 h-4 text-gold-400" />
-                            <span className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>Balance</span>
+                            <span className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                                {td('stats.balance')}
+                            </span>
                         </div>
                         <p className="text-2xl font-display text-gold-400">{balance.toLocaleString()}</p>
-                        <p className="text-[10px] font-body mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>API credits remaining</p>
+                        <p className="text-[10px] font-body mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                            {td('stats.creditsRemaining')}
+                        </p>
                     </div>
                 )}
+
+                {/* Language switch in sidebar for mobile/tablet */}
+                <div className="px-4 mb-4 lg:hidden">
+                    <LanguageSwitcher />
+                </div>
 
                 {/* Logout */}
                 <div className="p-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
                     <button
-                        onClick={() => authApi.logout().then(() => window.location.href = '/login')}
+                        onClick={() => authApi.logout().then(() => window.location.href = `/${locale}/login`)}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-accent text-sm transition-all"
                         style={{ color: 'rgba(255,255,255,0.35)' }}
                         onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.08)' }}
                         onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.35)'; e.currentTarget.style.backgroundColor = 'transparent' }}
                     >
                         <LogOut className="w-4 h-4" />
-                        <span>Logout</span>
+                        <span>{t('logout')}</span>
                     </button>
                 </div>
             </aside>
@@ -184,11 +198,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         </div>
 
                         <div className="flex items-center gap-4 ml-auto">
+                            {/* Language Switcher */}
+                            <div className="hidden md:block">
+                                <LanguageSwitcher />
+                            </div>
+
                             {/* Balance chip */}
                             <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-accent"
                                 style={{ backgroundColor: 'rgba(5,150,105,0.08)', borderColor: 'rgba(5,150,105,0.2)', color: '#34d399' }}>
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                {balance !== null ? balance.toLocaleString() : '...'} tokens
+                                {balance !== null ? balance.toLocaleString() : '...'} {td('stats.creditsRemaining').split(' ')[0]}
                             </div>
 
                             {/* User */}

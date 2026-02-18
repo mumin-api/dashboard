@@ -8,8 +8,10 @@ import { ApiKeyCard } from '@/components/dashboard/api-key-card'
 import { RecentActivity } from '@/components/dashboard/recent-activity'
 import { authApi } from '@/lib/api/auth'
 import { billingApi } from '@/lib/api/billing'
+import { useTranslations } from 'next-intl'
 
 export default function DashboardPage() {
+    const t = useTranslations('Dashboard')
     const [user, setUser] = useState<any>(null)
     const [stats, setStats] = useState({
         balance: 0,
@@ -58,43 +60,43 @@ export default function DashboardPage() {
             {/* Header */}
             <div>
                 <h1 className="text-4xl font-display" style={{ color: 'rgba(255,255,255,0.9)' }}>
-                    As-salamu alaykum,{' '}
+                    {t('welcome')},{' '}
                     <span className="text-gold-400">{user?.displayName || user?.firstName || 'Sahabi'}</span>
                 </h1>
                 <p className="mt-2 font-body" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                    Here&apos;s what&apos;s happening with your API today
+                    {t('subtitle')}
                 </p>
             </div>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatsCard
-                    title="Balance"
+                    title={t('stats.balance')}
                     value={`${(stats?.balance ?? 0).toLocaleString()}`}
-                    subtitle="credits remaining"
+                    subtitle={t('stats.creditsRemaining')}
                     icon={<DollarSign className="w-6 h-6" />}
                     trend={{ value: 0, isPositive: true }}
                     color="gold"
                 />
                 <StatsCard
-                    title="Today's Requests"
+                    title={t('stats.todayRequests')}
                     value={(stats?.requestsToday ?? 0).toLocaleString()}
-                    subtitle="requests today"
+                    subtitle={t('stats.requestsToday')}
                     icon={<Activity className="w-6 h-6" />}
                     trend={{ value: 0, isPositive: true }}
                     color="emerald"
                 />
                 <StatsCard
-                    title="Total Requests"
+                    title={t('stats.totalRequests')}
                     value={(stats?.totalRequests ?? 0).toLocaleString()}
-                    subtitle="lifetime"
+                    subtitle={t('stats.lifetime')}
                     icon={<TrendingUp className="w-6 h-6" />}
                     color="sapphire"
                 />
                 <StatsCard
-                    title="Avg Response"
+                    title={t('stats.avgResponse')}
                     value={`${stats?.avgResponseTime ?? 0}ms`}
-                    subtitle="response time"
+                    subtitle={t('stats.responseTime')}
                     icon={<Activity className="w-6 h-6" />}
                     trend={{ value: 12, isPositive: true }}
                     color="emerald"

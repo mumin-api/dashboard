@@ -3,14 +3,19 @@
 import { useState, useEffect, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, Lock, ArrowRight, CheckCircle, Loader2 } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Link, useRouter } from '@/lib/navigation'
+import { useSearchParams } from 'next/navigation'
 import { GeometricPattern } from '@/components/islamic/geometric-pattern'
 import { authApi } from '@/lib/api/auth'
+import { useTranslations, useLocale } from 'next-intl'
 
 function LoginContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
+    const t = useTranslations('Auth.login')
+    const tc = useTranslations('Common')
+    const locale = useLocale()
+    
     const [formData, setFormData] = useState({ email: '', password: '', remember: false })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
@@ -21,9 +26,9 @@ function LoginContent() {
         const msg = searchParams.get('msg')
         if (reason) {
             let errorMsg = `Auth error: ${reason}`
-            if (reason === 'no_token') errorMsg = "Your browser didn't send the authentication cookie. This usually means a domain mismatch."
+            if (reason === 'no_token') errorMsg = "Your browser didn't send the authentication cookie."
             if (reason === 'middleware_error') errorMsg = `Connection to API failed: ${msg || 'Unknown error'}`
-            if (reason === 'auth_failed') errorMsg = `Session invalid (Status: ${searchParams.get('status')})`
+            if (reason === 'auth_failed') errorMsg = `Session invalid`
             setError(errorMsg)
         }
         if (searchParams.get('verified') === 'true') {
@@ -39,7 +44,7 @@ function LoginContent() {
         try {
             await authApi.login({ email: formData.email, password: formData.password })
             const returnUrl = searchParams.get('returnUrl') || '/dashboard'
-            window.location.href = returnUrl
+            window.location.href = `/${locale}${returnUrl}`
         } catch (err: any) {
             const errorCode = err.response?.data?.error || err.error
             if (errorCode === 'EMAIL_NOT_VERIFIED') {
@@ -47,11 +52,18 @@ function LoginContent() {
                 router.push(`/verify-email?email=${encodeURIComponent(userEmail)}`)
                 return
             }
-            setError(err.message || 'Login failed')
+            setError(err.message || tc('error'))
         } finally {
             setLoading(false)
         }
     }
+
+    const features = [
+        t('decorative.features.hadiths'),
+        t('decorative.features.languages'),
+        t('decorative.features.analytics'),
+        t('decorative.features.security'),
+    ]
 
     return (
         <div className="min-h-screen grid lg:grid-cols-2" style={{ backgroundColor: '#0a0f0d' }}>
@@ -76,9 +88,9 @@ function LoginContent() {
                     </div>
 
                     <p className="text-xs font-accent uppercase tracking-widest text-emerald-400 mb-3">Developer Console</p>
-                    <h1 className="text-4xl font-display text-ivory mb-2">Welcome Back</h1>
+                    <h1 className="text-4xl font-display text-ivory mb-2">{t('title')}</h1>
                     <p className="mb-8 font-body" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                        Sign in to access your dashboard
+                        {t('subtitle')}
                     </p>
 
                     {showVerifiedMessage && (
@@ -86,7 +98,7 @@ function LoginContent() {
                             style={{ backgroundColor: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.2)' }}>
                             <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
                             <span className="text-emerald-300 text-sm font-accent">
-                                Email verified successfully! You can now log in.
+                                {t('verified')}
                             </span>
                         </div>
                     )}
@@ -101,7 +113,7 @@ function LoginContent() {
                     <form onSubmit={handleSubmit} className="space-y-5">
                         {/* Email */}
                         <div className="space-y-2">
-                            <label className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>Email</label>
+                            <label className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>{t('email')}</label>
                             <div className="relative">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'rgba(255,255,255,0.25)' }} />
                                 <input
@@ -124,7 +136,7 @@ function LoginContent() {
 
                         {/* Password */}
                         <div className="space-y-2">
-                            <label className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>Password</label>
+                            <label className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>{t('password')}</label>
                             <div className="relative">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'rgba(255,255,255,0.25)' }} />
                                 <input
@@ -155,10 +167,10 @@ function LoginContent() {
                                     className="w-4 h-4 rounded"
                                     style={{ accentColor: '#059669' }}
                                 />
-                                <span className="text-sm font-body" style={{ color: 'rgba(255,255,255,0.4)' }}>Remember me</span>
+                                <span className="text-sm font-body" style={{ color: 'rgba(255,255,255,0.4)' }}>{t('remember')}</span>
                             </label>
                             <a href="#" className="text-sm font-accent text-emerald-400 hover:text-emerald-300 transition-colors">
-                                Forgot password?
+                                {t('forgot')}
                             </a>
                         </div>
 
@@ -170,17 +182,17 @@ function LoginContent() {
                             style={{ background: 'linear-gradient(135deg, #34d399, #059669)', boxShadow: '0 10px 40px rgba(5,150,105,0.3)' }}
                         >
                             {loading ? (
-                                <><Loader2 className="w-4 h-4 animate-spin" /> Signing in...</>
+                                <><Loader2 className="w-4 h-4 animate-spin" /> {t('signingIn')}</>
                             ) : (
-                                <>Sign In <ArrowRight className="w-4 h-4" /></>
+                                <>{t('submit')} <ArrowRight className="w-4 h-4" /></>
                             )}
                         </button>
                     </form>
 
                     <p className="mt-8 text-center text-sm font-body" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                        Don&apos;t have an account?{' '}
+                        {t('noAccount')}{' '}
                         <Link href="/register" className="text-emerald-400 hover:text-emerald-300 font-accent transition-colors">
-                            Create one
+                            {t('createOne')}
                         </Link>
                     </p>
                 </motion.div>
@@ -213,20 +225,15 @@ function LoginContent() {
                         </div>
 
                         <h2 className="text-3xl font-display text-ivory mb-4">
-                            Access Your Dashboard
+                            {t('decorative.title')}
                         </h2>
                         <p className="text-ivory/60 font-body text-lg mb-10">
-                            Manage API keys, view analytics, and track usage across all your applications.
+                            {t('decorative.description')}
                         </p>
 
                         {/* Feature list */}
                         <div className="space-y-3 text-left">
-                            {[
-                                '50,000+ authenticated hadiths',
-                                '7 language translations',
-                                'Real-time usage analytics',
-                                'Enterprise-grade security',
-                            ].map(item => (
+                            {features.map(item => (
                                 <div key={item} className="flex items-center gap-3">
                                     <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
                                         style={{ backgroundColor: 'rgba(52,211,153,0.15)' }}>

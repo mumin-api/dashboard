@@ -5,30 +5,33 @@ import { Clock, ArrowUpRight, ArrowDownRight, AlertTriangle, Gift, Loader2 } fro
 import { IslamicCard } from '@/components/islamic/islamic-card'
 import { billingApi } from '@/lib/api/billing'
 import type { Transaction } from '@/types/api'
-
-function timeAgo(dateStr: string): string {
-    const diff = Date.now() - new Date(dateStr).getTime()
-    const mins = Math.floor(diff / 60000)
-    if (mins < 1) return 'just now'
-    if (mins < 60) return `${mins}m ago`
-    const hrs = Math.floor(mins / 60)
-    if (hrs < 24) return `${hrs}h ago`
-    const days = Math.floor(hrs / 24)
-    return `${days}d ago`
-}
-
-const TYPE_CONFIG: Record<string, { icon: any; color: string; label: string }> = {
-    top_up:        { icon: ArrowUpRight,   color: '#34d399', label: 'Top Up' },
-    usage:         { icon: ArrowDownRight, color: 'rgba(255,255,255,0.4)', label: 'API Request' },
-    refund:        { icon: ArrowUpRight,   color: '#60a5fa', label: 'Refund' },
-    bonus:         { icon: Gift,           color: '#fbbf24', label: 'Bonus' },
-    inactivity_fee:{ icon: AlertTriangle,  color: '#f87171', label: 'Inactivity Fee' },
-}
+import { useTranslations } from 'next-intl'
+import { Link } from '@/lib/navigation'
 
 export function RecentActivity() {
+    const t = useTranslations('Dashboard.recentActivity')
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
+
+    function timeAgo(dateStr: string): string {
+        const diff = Date.now() - new Date(dateStr).getTime()
+        const mins = Math.floor(diff / 60000)
+        if (mins < 1) return t('time.justNow')
+        if (mins < 60) return t('time.minutes', { mins })
+        const hrs = Math.floor(mins / 60)
+        if (hrs < 24) return t('time.hours', { hrs })
+        const days = Math.floor(hrs / 24)
+        return t('time.days', { days })
+    }
+
+    const TYPE_CONFIG: Record<string, { icon: any; color: string; labelKey: string }> = {
+        top_up:        { icon: ArrowUpRight,   color: '#34d399', labelKey: 'top_up' },
+        usage:         { icon: ArrowDownRight, color: 'rgba(255,255,255,0.4)', labelKey: 'usage' },
+        refund:        { icon: ArrowUpRight,   color: '#60a5fa', labelKey: 'refund' },
+        bonus:         { icon: Gift,           color: '#fbbf24', labelKey: 'bonus' },
+        inactivity_fee:{ icon: AlertTriangle,  color: '#f87171', labelKey: 'inactivity_fee' },
+    }
 
     useEffect(() => {
         billingApi.getTransactions(1, 8)
@@ -42,7 +45,7 @@ export function RecentActivity() {
             <div className="p-6">
                 <h3 className="text-base font-display font-bold mb-5 uppercase tracking-widest"
                     style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem' }}>
-                    Recent Activity
+                    {t('title')}
                 </h3>
 
                 {loading && (
@@ -53,13 +56,13 @@ export function RecentActivity() {
 
                 {error && (
                     <p className="text-center py-8 text-sm" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                        Failed to load activity
+                        {t('failed')}
                     </p>
                 )}
 
                 {!loading && !error && transactions.length === 0 && (
                     <p className="text-center py-8 text-sm" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                        No activity yet
+                        {t('noActivity')}
                     </p>
                 )}
 
@@ -86,7 +89,7 @@ export function RecentActivity() {
                                     {/* Info */}
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-accent truncate" style={{ color: 'rgba(255,255,255,0.75)' }}>
-                                            {tx.description || cfg.label}
+                                            {tx.description || t(`types.${cfg.labelKey}`)}
                                         </p>
                                         <div className="flex items-center gap-1 mt-0.5">
                                             <Clock className="w-3 h-3" style={{ color: 'rgba(255,255,255,0.2)' }} />
@@ -108,13 +111,12 @@ export function RecentActivity() {
                 )}
 
                 {!loading && !error && (
-                    <button className="w-full mt-4 py-2 text-xs font-accent uppercase tracking-widest transition-colors"
+                    <Link href="/billing" className="block w-full mt-4 text-center py-2 text-xs font-accent uppercase tracking-widest transition-colors"
                         style={{ color: 'rgba(52,211,153,0.6)' }}
-                        onMouseEnter={e => e.currentTarget.style.color = '#34d399'}
-                        onMouseLeave={e => e.currentTarget.style.color = 'rgba(52,211,153,0.6)'}
-                        onClick={() => window.location.href = '/billing'}>
-                        View All Transactions →
-                    </button>
+                        onMouseEnter={(e: React.MouseEvent) => (e.currentTarget as HTMLElement).style.color = '#34d399'}
+                        onMouseLeave={(e: React.MouseEvent) => (e.currentTarget as HTMLElement).style.color = 'rgba(52,211,153,0.6)'}>
+                        {t('viewAllFull')}
+                    </Link>
                 )}
             </div>
         </IslamicCard>

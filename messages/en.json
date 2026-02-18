@@ -1,0 +1,211 @@
+{
+  "Common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "search": "Search...",
+    "noData": "No data available",
+    "error": "An error occurred",
+    "saving": "Saving..."
+  },
+  "Dashboard": {
+    "title": "API Dashboard",
+    "welcome": "As-salamu alaykum",
+    "subtitle": "Here's what's happening with your API today",
+    "stats": {
+      "balance": "Balance",
+      "todayRequests": "Today's Requests",
+      "totalRequests": "Total Requests",
+      "avgResponse": "Avg Response",
+      "creditsRemaining": "credits remaining",
+      "requestsToday": "requests today",
+      "lifetime": "lifetime",
+      "responseTime": "response time"
+    },
+    "usage": {
+      "title": "API Usage",
+      "subtitle": "Last 7 days",
+      "thisWeek": "This Week",
+      "today": "Today",
+      "requests": "Requests",
+      "noData": "No usage data yet. Make your first API request!"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "subtitle": "Your latest API keys and transactions",
+      "viewAll": "View All",
+      "noActivity": "No activity yet",
+      "failed": "Failed to load activity",
+      "viewAllFull": "View All Transactions →",
+      "types": {
+        "top_up": "Top Up",
+        "usage": "API Request",
+        "refund": "Refund",
+        "bonus": "Bonus",
+        "inactivity_fee": "Inactivity Fee"
+      },
+      "time": {
+          "justNow": "just now",
+          "minutes": "{mins}m ago",
+          "hours": "{hrs}h ago",
+          "days": "{days}d ago"
+      }
+    },
+    "apiKeys": {
+        "title": "Active API Keys",
+        "create": "Create New Key",
+        "newKey": "+ New Key",
+        "firstKey": "Create First Key",
+        "description": "Use these keys to authenticate your API requests",
+        "productionKey": "Production Key",
+        "trustScore": "Trust Score",
+        "lastUsed": "Last used",
+        "usage": "Usage",
+        "none": "None yet",
+        "copy": "Copy Key",
+        "delete": "Delete Key",
+        "refresh": "Refresh Key",
+        "active": "Active",
+        "secretLabel": "Secret Key (Save it now!)",
+        "connecting": "Connecting to API...",
+        "noKeys": "No API keys active",
+        "maxReached": "Maximum limit of 5 keys reached."
+    }
+  },
+  "ApiKeys": {
+    "title": "API Keys",
+    "description": "Manage your API keys and access tokens"
+  },
+  "Billing": {
+    "title": "Billing",
+    "description": "Manage your credits and payment history",
+    "topUp": "Top Up Credits",
+    "currentBalance": "Current Balance",
+    "credits": "credits",
+    "packages": "Credit Packages",
+    "popular": "Popular",
+    "purchase": "Purchase",
+    "history": "Transaction History",
+    "export": "Export",
+    "noTransactions": "No transactions found",
+    "creditPurchase": "Credit Purchase",
+    "usageDeduction": "Usage Deduction",
+    "loading": "Loading billing info..."
+  },
+  "Analytics": {
+    "title": "Analytics",
+    "description": "Track your API usage and performance metrics",
+    "totalRequests": "Total Requests",
+    "allTime": "all time",
+    "countries": "Countries",
+    "uniqueLocations": "unique locations",
+    "avgSpeed": "Avg Speed",
+    "responseTime": "response time",
+    "geo": {
+      "title": "Geographic Distribution",
+      "noData": "No geographic data available yet."
+    },
+    "endpoints": {
+      "title": "Top Endpoints",
+      "noData": "No endpoint data available yet."
+    }
+  },
+  "Settings": {
+    "title": "Settings",
+    "description": "Manage your account preferences and security",
+    "profile": {
+      "title": "Profile",
+      "email": "Email",
+      "displayName": "Display Name",
+      "placeholder": "Your name",
+      "updated": "Profile updated successfully!",
+      "fail": "Failed to update profile"
+    },
+    "apiPref": {
+      "title": "API Preferences",
+      "webhook": "Webhook URL",
+      "ipWhitelist": "IP Whitelist (comma-separated)",
+      "update": "Update Preferences"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "lowBalance": "Low balance alerts",
+      "lowBalanceDesc": "Get notified when balance is low",
+      "usageReports": "Usage reports",
+      "usageReportsDesc": "Weekly usage summary emails",
+      "securityAlerts": "Security alerts",
+      "securityAlertsDesc": "Suspicious activity notifications"
+    },
+    "danger": {
+      "title": "Danger Zone",
+      "delete": "Delete Account",
+      "deleteDesc": "Permanently delete your account and all associated data. This action cannot be undone."
+    },
+    "loading": "Loading settings..."
+  },
+  "Auth": {
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to access your dashboard",
+      "email": "Email Address",
+      "password": "Password",
+      "remember": "Remember me",
+      "forgot": "Forgot password?",
+      "submit": "Sign In",
+      "signingIn": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "createOne": "Create one",
+      "verified": "Email verified successfully! You can now log in.",
+      "decorative": {
+        "title": "Access Your Dashboard",
+        "description": "Manage API keys, view analytics, and track usage across all your applications.",
+        "features": {
+          "hadiths": "50,000+ authenticated hadiths",
+          "languages": "7 language translations",
+          "analytics": "Real-time usage analytics",
+          "security": "Enterprise-grade security"
+        }
+      }
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Get started with Mumin Hadith API",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "terms": "I accept the Terms of Service",
+      "privacy": "I accept the Privacy Policy",
+      "submit": "Create Account",
+      "submitting": "Creating account...",
+      "alreadyAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "verify": {
+        "title": "Verify Your Email",
+        "subtitle": "Enter the 6-digit code sent to",
+        "resend": "Resend Code",
+        "resending": "Resending...",
+        "resendIn": "Resend in {seconds}s",
+        "spam": "Didn't receive the code? Check your spam folder."
+      },
+      "decorative": {
+        "title": "Access Authentic Hadith",
+        "description": "Join thousands of developers building Islamic applications with our comprehensive Hadith API"
+      }
+    },
+    "errors": {
+       "match": "Passwords do not match",
+       "accept": "Please accept Terms of Service and Privacy Policy"
+    }
+  },
+  "Sidebar": {
+    "dashboard": "Dashboard",
+    "apiKeys": "API Keys",
+    "billing": "Billing",
+    "analytics": "Analytics",
+    "docs": "Documentation",
+    "settings": "Settings",
+    "logout": "Logout"
+  }
+}

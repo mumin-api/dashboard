@@ -6,8 +6,11 @@ import { IslamicCard } from '@/components/islamic/islamic-card'
 import { UsageChart } from '@/components/dashboard/usage-chart'
 import { StatsCard } from '@/components/dashboard/stats-card'
 import { billingApi } from '@/lib/api/billing'
+import { useTranslations } from 'next-intl'
 
 export default function AnalyticsPage() {
+    const t = useTranslations('Analytics')
+    const tc = useTranslations('Common')
     const [stats, setStats] = useState<any>(null)
     const [loading, setLoading] = useState(true)
 
@@ -27,32 +30,32 @@ export default function AnalyticsPage() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-4xl font-display" style={{ color: 'rgba(255,255,255,0.9)' }}>Analytics</h1>
+                <h1 className="text-4xl font-display" style={{ color: 'rgba(255,255,255,0.9)' }}>{t('title')}</h1>
                 <p className="mt-2 font-body" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                    Track your API usage and performance metrics
+                    {t('description')}
                 </p>
             </div>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatsCard
-                    title="Total Requests"
+                    title={t('totalRequests')}
                     value={(stats?.totalRequests || 0).toLocaleString()}
-                    subtitle="all time"
+                    subtitle={t('allTime')}
                     icon={<BarChart3 className="w-6 h-6" />}
                     color="emerald"
                 />
                 <StatsCard
-                    title="Countries"
+                    title={t('countries')}
                     value="—"
-                    subtitle="unique locations"
+                    subtitle={t('uniqueLocations')}
                     icon={<Globe className="w-6 h-6" />}
                     color="sapphire"
                 />
                 <StatsCard
-                    title="Avg Speed"
+                    title={t('avgSpeed')}
                     value="42ms"
-                    subtitle="response time"
+                    subtitle={t('responseTime')}
                     icon={<Zap className="w-6 h-6" />}
                     trend={{ value: 12, isPositive: true }}
                     color="gold"
@@ -66,12 +69,12 @@ export default function AnalyticsPage() {
             <IslamicCard>
                 <div className="p-6">
                     <h3 className="text-base font-display font-bold mb-6" style={{ color: 'rgba(255,255,255,0.85)' }}>
-                        Geographic Distribution
+                        {t('geo.title')}
                     </h3>
                     <div className="text-center p-8 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
                         <Globe className="w-8 h-8 mx-auto mb-3" style={{ color: 'rgba(255,255,255,0.1)' }} />
                         <p className="text-sm font-body" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                            No geographic data available yet.
+                            {t('geo.noData')}
                         </p>
                     </div>
                 </div>
@@ -81,12 +84,12 @@ export default function AnalyticsPage() {
             <IslamicCard>
                 <div className="p-6">
                     <h3 className="text-base font-display font-bold mb-6" style={{ color: 'rgba(255,255,255,0.85)' }}>
-                        Top Endpoints
+                        {t('endpoints.title')}
                     </h3>
                     <div className="text-center p-8 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
                         <BarChart3 className="w-8 h-8 mx-auto mb-3" style={{ color: 'rgba(255,255,255,0.1)' }} />
                         <p className="text-sm font-body" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                            No endpoint data available yet.
+                            {t('endpoints.noData')}
                         </p>
                     </div>
                 </div>

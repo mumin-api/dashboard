@@ -3,6 +3,7 @@ import { Copy, Eye, EyeOff, MoreVertical, Trash2, RefreshCw, AlertCircle, Key } 
 import { IslamicCard } from '@/components/islamic/islamic-card'
 import { keysApi } from '@/lib/api/keys'
 import { toast } from '@/components/ui/toast'
+import { useTranslations } from 'next-intl'
 
 interface ApiKey {
     id: string
@@ -13,23 +14,23 @@ interface ApiKey {
 }
 
 export function ApiKeyCard() {
+    const t = useTranslations('Dashboard.apiKeys')
+    const tc = useTranslations('Common')
+    
     const [keys, setKeys] = useState<ApiKey[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [newFullKey, setNewFullKey] = useState<string | null>(null)
 
     useEffect(() => {
-        console.log('[ApiKeyCard] Mounted. Initial load...');
         loadKeys()
     }, [])
 
     const loadKeys = async () => {
         try {
-            console.log('[ApiKeyCard] Loading keys...');
             setLoading(true)
             setError(null)
             const res: any = await keysApi.getMe()
-            console.log('[ApiKeyCard] Keys received:', res);
 
             if (Array.isArray(res)) {
                 setKeys(res)
@@ -39,55 +40,49 @@ export function ApiKeyCard() {
                 setKeys([])
             }
         } catch (err: any) {
-            console.error('[ApiKeyCard] Load failed:', err)
-            setError(err.message || 'API Connection Error. Verify server at http://127.0.0.1:3333/v1')
+            setError(err.message || tc('error'))
         } finally {
             setLoading(false)
         }
     }
 
     const handleCreateKey = async () => {
-        console.log('[ApiKeyCard] Create button clicked!');
-
         if (keys.length >= 5) {
-            toast('Maximum limit of 5 keys reached.', 'error')
+            toast(t('maxReached'), 'error')
             return
         }
 
         try {
             setLoading(true)
             const res: any = await keysApi.create()
-            console.log('[ApiKeyCard] Key created:', res);
 
             if (res && res.apiKey) {
                 setNewFullKey(res.apiKey)
-                toast('API Key created! Save it somewhere safe.', 'success')
+                toast('API Key created!', 'success')
             } else {
-                toast('New key generated.', 'success')
+                toast('Success', 'success')
             }
             await loadKeys()
         } catch (error: any) {
-            console.error('[ApiKeyCard] Create failed:', error)
-            toast(error.message || 'Failed to create key. Try again maybe?', 'error')
+            toast(error.message || tc('error'), 'error')
         } finally {
             setLoading(false)
         }
     }
 
     const handleRotateKey = async (apiKeyId: string) => {
-        if (!confirm('Rotate this key? Old one will stop working.')) return;
+        if (!confirm('Rotate this key?')) return;
 
         try {
             setLoading(true)
             const res: any = await keysApi.rotate()
             if (res && res.apiKey) {
                 setNewFullKey(res.apiKey)
-                toast('Key rotated successfully!', 'success')
+                toast('Success', 'success')
             }
             await loadKeys()
         } catch (error: any) {
-            console.error('[ApiKeyCard] Rotation failed:', error)
-            toast('Rotating failed. Check connection.', 'error')
+            toast(tc('error'), 'error')
         } finally {
             setLoading(false)
         }
@@ -102,13 +97,13 @@ export function ApiKeyCard() {
         <IslamicCard>
             <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-display text-emerald-900">API Keys</h3>
+                    <h3 className="text-xl font-display text-emerald-900">{t('title')}</h3>
                     <button
                         onClick={handleCreateKey}
                         disabled={loading || keys.length >= 5}
                         className="relative z-10 px-4 py-2 bg-emerald-900 hover:bg-emerald-800 disabled:opacity-50 text-ivory rounded-lg text-sm font-accent transition-all cursor-pointer shadow-lg active:scale-95"
                     >
-                        {loading && keys.length === 0 ? 'Loading...' : '+ New Key'}
+                        {loading && keys.length === 0 ? tc('loading') : t('newKey')}
                     </button>
                 </div>
 
@@ -131,17 +126,17 @@ export function ApiKeyCard() {
                     {loading && keys.length === 0 ? (
                         <div className="text-center p-8 bg-sand/20 rounded-xl">
                             <RefreshCw className="w-8 h-8 animate-spin text-emerald-900/20 mx-auto mb-2" />
-                            <p className="text-sm text-charcoal/40 font-body italic">Connecting to API...</p>
+                            <p className="text-sm text-charcoal/40 font-body italic">{t('connecting')}</p>
                         </div>
                     ) : keys.length === 0 && !error ? (
                         <div className="text-center p-8 bg-sand/30 rounded-xl border border-dashed border-emerald-900/10">
                             <Key className="w-8 h-8 text-emerald-900/20 mx-auto mb-2" />
-                            <p className="text-sm text-charcoal/60 font-body mb-4">No API keys active</p>
+                            <p className="text-sm text-charcoal/60 font-body mb-4">{t('noKeys')}</p>
                             <button
                                 onClick={handleCreateKey}
                                 className="px-6 py-2 bg-emerald-900 text-ivory rounded-lg font-accent hover:shadow-glow-emerald transition-all active:scale-95"
                             >
-                                Create First Key
+                                {t('firstKey')}
                             </button>
                         </div>
                     ) : (
@@ -152,21 +147,21 @@ export function ApiKeyCard() {
                             >
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
-                                        <h4 className="font-accent text-emerald-900 mb-1">Production Key</h4>
+                                        <h4 className="font-accent text-emerald-900 mb-1">{t('productionKey')}</h4>
                                         <p className="text-sm text-charcoal/60 font-body">
-                                            Created {new Date(key.createdAt).toLocaleDateString()}
+                                            {new Date(key.createdAt).toLocaleDateString()}
                                         </p>
                                     </div>
 
                                     <div className="p-1 px-2 bg-emerald-100 text-emerald-700 text-[10px] rounded uppercase tracking-wider font-bold">
-                                        Active
+                                        {t('active')}
                                     </div>
                                 </div>
 
                                 {newFullKey && newFullKey.startsWith(key.keyPrefix) && (
                                     <div className="mb-4 animate-in fade-in slide-in-from-top-4">
                                         <div className="p-3 bg-emerald-900 text-ivory rounded-lg shadow-inner">
-                                            <p className="text-[10px] font-accent uppercase tracking-widest text-gold-400 mb-2">Secret Key (Save it now!):</p>
+                                            <p className="text-[10px] font-accent uppercase tracking-widest text-gold-400 mb-2">{t('secretLabel')}</p>
                                             <div className="flex items-center space-x-2">
                                                 <code className="flex-1 text-sm font-mono break-all font-bold selection:bg-gold-500/30">
                                                     {newFullKey}
@@ -193,7 +188,7 @@ export function ApiKeyCard() {
                                                 copyToClipboard(newFullKey)
                                             } else {
                                                 copyToClipboard(key.keyPrefix)
-                                                toast('Only prefix copied. Key is secret.', 'info')
+                                                toast('Only prefix copied.', 'info')
                                             }
                                         }}
                                     >
@@ -204,7 +199,7 @@ export function ApiKeyCard() {
                                 <div className="flex items-center justify-between text-[11px]">
                                     <div className="flex items-center space-x-4">
                                         <span className="text-charcoal/40 font-body">
-                                            Usage: {key.lastUsedAt ? new Date(key.lastUsedAt).toLocaleDateString() : 'None yet'}
+                                            {t('usage')}: {key.lastUsedAt ? new Date(key.lastUsedAt).toLocaleDateString() : t('none')}
                                         </span>
                                         <button
                                             onClick={() => handleRotateKey(key.id)}
@@ -212,7 +207,7 @@ export function ApiKeyCard() {
                                             className="text-emerald-700 hover:text-emerald-900 flex items-center space-x-1 font-accent"
                                         >
                                             <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-                                            <span>Refresh Key</span>
+                                            <span>{t('refresh')}</span>
                                         </button>
                                     </div>
                                 </div>

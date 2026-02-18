@@ -5,25 +5,20 @@ import { IslamicCard } from '@/components/islamic/islamic-card'
 import { analyticsApi } from '@/lib/api/analytics'
 import { Loader2, TrendingUp } from 'lucide-react'
 import type { UsageStats } from '@/types/api'
+import { useTranslations, useLocale } from 'next-intl'
 
 // Generate last N days as labels
-function getLast7Days(): string[] {
+function getLast7Days(locale: string): string[] {
     return Array.from({ length: 7 }, (_, i) => {
         const d = new Date()
         d.setDate(d.getDate() - (6 - i))
-        return d.toLocaleDateString('en', { weekday: 'short' })
-    })
-}
-
-function getLast7DaysDates(): string[] {
-    return Array.from({ length: 7 }, (_, i) => {
-        const d = new Date()
-        d.setDate(d.getDate() - (6 - i))
-        return d.toISOString().split('T')[0]
+        return d.toLocaleDateString(locale, { weekday: 'short' })
     })
 }
 
 export function UsageChart() {
+    const t = useTranslations('Dashboard.usage')
+    const locale = useLocale()
     const [data, setData] = useState<UsageStats[]>([])
     const [loading, setLoading] = useState(true)
     const [totalToday, setTotalToday] = useState(0)
@@ -46,7 +41,7 @@ export function UsageChart() {
         fetchData()
     }, [])
 
-    const labels = getLast7Days()
+    const labels = getLast7Days(locale)
     const maxVal = Math.max(...data.map(d => d.requests), 1)
     const totalWeek = data.reduce((s, d) => s + d.requests, 0)
 
@@ -57,23 +52,23 @@ export function UsageChart() {
                 <div className="flex items-start justify-between mb-6">
                     <div>
                         <h3 className="text-base font-display font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>
-                            API Usage
+                            {t('title')}
                         </h3>
-                        <p className="text-xs font-body mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>Last 7 days</p>
+                        <p className="text-xs font-body mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{t('subtitle')}</p>
                     </div>
 
                     <div className="flex items-center gap-6">
                         <div className="text-right">
-                            <p className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>This Week</p>
+                            <p className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>{t('thisWeek')}</p>
                             <p className="text-xl font-display text-emerald-400">{totalWeek.toLocaleString()}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>Today</p>
+                            <p className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>{t('today')}</p>
                             <p className="text-xl font-display text-gold-400">{totalToday.toLocaleString()}</p>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                            <span className="text-xs font-body" style={{ color: 'rgba(255,255,255,0.35)' }}>Requests</span>
+                            <span className="text-xs font-body" style={{ color: 'rgba(255,255,255,0.35)' }}>{t('requests')}</span>
                         </div>
                     </div>
                 </div>
@@ -87,8 +82,8 @@ export function UsageChart() {
                 {!loading && data.length === 0 && (
                     <div className="h-[220px] flex flex-col items-center justify-center gap-3">
                         <TrendingUp className="w-8 h-8" style={{ color: 'rgba(255,255,255,0.1)' }} />
-                        <p className="text-sm font-body" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                            No usage data yet. Make your first API request!
+                        <p className="text-sm font-body px-8 text-center" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                            {t('noData')}
                         </p>
                     </div>
                 )}

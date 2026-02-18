@@ -3,16 +3,20 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, Lock, ArrowRight, CheckCircle, Clock, RefreshCw, AlertCircle } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { Link, useRouter } from '@/lib/navigation'
 import { GeometricPattern } from '@/components/islamic/geometric-pattern'
 import { authApi } from '@/lib/api/auth'
 import { apiClient } from '@/lib/api/client'
 import { toast } from '@/components/ui/toast'
 import { useRef, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 
 export default function RegisterPage() {
     const router = useRouter()
+    const t = useTranslations('Auth.register')
+    const tc = useTranslations('Common')
+    const te = useTranslations('Auth.errors')
+    
     const [step, setStep] = useState<'register' | 'verify'>('register')
     const [registeredEmail, setRegisteredEmail] = useState('')
 
@@ -59,12 +63,12 @@ export default function RegisterPage() {
         setError('')
 
         if (formData.password !== formData.confirmPassword) {
-            setError('Passwords do not match')
+            setError(te('match'))
             return
         }
 
         if (!formData.acceptTerms || !formData.acceptPrivacy) {
-            setError('Please accept Terms of Service and Privacy Policy')
+            setError(te('accept'))
             return
         }
 
@@ -87,7 +91,7 @@ export default function RegisterPage() {
             setStep('verify')
             toast('Registration successful! Check your email for verification code.', 'success')
         } catch (err: any) {
-            setError(err.message || 'Registration failed')
+            setError(err.message || tc('error'))
         } finally {
             setLoading(false)
         }
@@ -146,7 +150,7 @@ export default function RegisterPage() {
                 router.push('/login?verified=true')
             }, 1500)
         } catch (err: any) {
-            const errorMessage = err.response?.data?.message || err.message || 'Verification failed'
+            const errorMessage = err.response?.data?.message || err.message || tc('error')
             const remaining = err.response?.data?.remainingAttempts
 
             if (remaining !== undefined) {
@@ -212,10 +216,10 @@ export default function RegisterPage() {
                             </div>
 
                             <h1 className="text-4xl font-display text-emerald-900 mb-2">
-                                Create Account
+                                {t('title')}
                             </h1>
                             <p className="text-charcoal/60 mb-8 font-body">
-                                Get started with Mumin Hadith API
+                                {t('subtitle')}
                             </p>
 
                             {error && (
@@ -229,7 +233,7 @@ export default function RegisterPage() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-accent text-emerald-900 mb-2">
-                                            First Name
+                                            {t('firstName')}
                                         </label>
                                         <input
                                             type="text"
@@ -241,7 +245,7 @@ export default function RegisterPage() {
                                     </div>
                                     <div>
                                         <label className="block text-sm font-accent text-emerald-900 mb-2">
-                                            Last Name
+                                            {t('lastName')}
                                         </label>
                                         <input
                                             type="text"
@@ -256,7 +260,7 @@ export default function RegisterPage() {
                                 {/* Email */}
                                 <div>
                                     <label className="block text-sm font-accent text-emerald-900 mb-2">
-                                        Email Address
+                                        {t('email')}
                                     </label>
                                     <div className="relative">
                                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-charcoal/40" />
@@ -274,7 +278,7 @@ export default function RegisterPage() {
                                 {/* Password */}
                                 <div>
                                     <label className="block text-sm font-accent text-emerald-900 mb-2">
-                                        Password
+                                        {t('password')}
                                     </label>
                                     <div className="relative">
                                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-charcoal/40" />
@@ -292,7 +296,7 @@ export default function RegisterPage() {
                                 {/* Confirm Password */}
                                 <div>
                                     <label className="block text-sm font-accent text-emerald-900 mb-2">
-                                        Confirm Password
+                                        {t('confirmPassword')}
                                     </label>
                                     <div className="relative">
                                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-charcoal/40" />
@@ -317,7 +321,7 @@ export default function RegisterPage() {
                                             className="mt-1 w-4 h-4 text-emerald-600 border-emerald-900/20 rounded focus:ring-emerald-500"
                                         />
                                         <span className="text-sm text-charcoal/80 font-body">
-                                            I accept the <Link href="/terms" className="text-emerald-700 hover:underline">Terms of Service</Link>
+                                            {t('terms')}
                                         </span>
                                     </label>
 
@@ -329,7 +333,7 @@ export default function RegisterPage() {
                                             className="mt-1 w-4 h-4 text-emerald-600 border-emerald-900/20 rounded focus:ring-emerald-500"
                                         />
                                         <span className="text-sm text-charcoal/80 font-body">
-                                            I accept the <Link href="/privacy" className="text-emerald-700 hover:underline">Privacy Policy</Link>
+                                            {t('privacy')}
                                         </span>
                                     </label>
                                 </div>
@@ -339,15 +343,15 @@ export default function RegisterPage() {
                                     disabled={loading}
                                     className="w-full bg-gradient-islamic text-ivory py-3 px-6 rounded-lg font-accent hover:shadow-glow-gold transition-all disabled:opacity-50 flex items-center justify-center space-x-2"
                                 >
-                                    <span>{loading ? 'Creating account...' : 'Create Account'}</span>
+                                    <span>{loading ? t('submitting') : t('submit')}</span>
                                     <ArrowRight className="w-5 h-5" />
                                 </button>
                             </form>
 
                             <p className="mt-6 text-center text-sm text-charcoal/60 font-body">
-                                Already have an account?{' '}
+                                {t('alreadyAccount')}{' '}
                                 <Link href="/login" className="text-emerald-700 hover:underline font-accent">
-                                    Sign in
+                                    {t('signIn')}
                                 </Link>
                             </p>
                         </motion.div>
@@ -365,10 +369,10 @@ export default function RegisterPage() {
                                     <Mail className="w-8 h-8 text-ivory" />
                                 </div>
                                 <h1 className="text-2xl font-display text-emerald-900 mb-2">
-                                    Verify Your Email
+                                    {t('verify.title')}
                                 </h1>
                                 <p className="text-sm text-charcoal/60 font-body">
-                                    Enter the 6-digit code sent to
+                                    {t('verify.subtitle')}
                                 </p>
                                 <p className="text-sm font-accent text-emerald-700 mt-1">
                                     {registeredEmail}
@@ -425,12 +429,12 @@ export default function RegisterPage() {
                             >
                                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                                 <span>
-                                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
+                                    {resendCooldown > 0 ? t('verify.resendIn', { seconds: resendCooldown }) : t('verify.resend')}
                                 </span>
                             </button>
 
                             <p className="text-xs text-center text-charcoal/40 mt-6 font-body">
-                                Didn&apos;t receive the code? Check your spam folder.
+                                {t('verify.spam')}
                             </p>
                         </motion.div>
                     )}
@@ -450,10 +454,10 @@ export default function RegisterPage() {
                     className="relative z-10 text-center"
                 >
                     <h2 className="text-4xl font-display text-ivory mb-6">
-                        Access Authentic Hadith
+                        {t('decorative.title')}
                     </h2>
                     <p className="text-ivory/80 text-lg font-body max-w-md mx-auto">
-                        Join thousands of developers building Islamic applications with our comprehensive Hadith API
+                        {t('decorative.description')}
                     </p>
                 </motion.div>
             </div>
