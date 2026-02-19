@@ -18,11 +18,19 @@ export async function middleware(request: NextRequest) {
     // Get token from cookies
     const token = request.cookies.get('access_token')?.value
 
-    // Define protected routes - check both raw and localized paths
-    const isDashboard = pathname === '/dashboard' || 
-                        pathname.startsWith('/dashboard/') || 
-                        locales.some(lang => pathname.startsWith(`/${lang}/dashboard`))
+    // 2. Define Public vs Protected Paths (Whitelist Approach)
+    const publicPaths = ['/', '/login', '/register', '/privacy', '/terms']
     
+    // Check if current path is public (handling both raw and localized)
+    const isPublicPath = publicPaths.some(path => 
+        pathname === path || 
+        pathname.startsWith(`${path}/`) ||
+        locales.some(lang => 
+            pathname === `/${lang}${path === '/' ? '' : path}` || 
+            pathname.startsWith(`/${lang}${path}/`)
+        )
+    )
+
     const isAuthPage = pathname === '/login' || 
                        pathname.startsWith('/login/') ||
                        pathname === '/register' ||
@@ -31,11 +39,14 @@ export async function middleware(request: NextRequest) {
                            pathname.startsWith(`/${lang}/login`) || 
                            pathname.startsWith(`/${lang}/register`)
                        )
+                       
+    // Protected if NOT in public whitelist
+    const isProtectedRoute = !isPublicPath
 
     // 2. Auth Logic
     // If no token, protect dashboard
     if (!token) {
-        if (isDashboard) {
+        if (isProtectedRoute) {
             const loginUrl = new URL('/login?reason=no_token', request.url)
             // Preserve locale if it's in the current path
             const currentLocale = locales.find(lang => pathname.startsWith(`/${lang}/`))
@@ -83,7 +94,7 @@ export async function middleware(request: NextRequest) {
 
     } catch (error: any) {
         console.error(`[Middleware] Error:`, error)
-        if (isDashboard) {
+        if (isProtectedRoute) {
             return NextResponse.redirect(new URL('/login?reason=middleware_error', request.url))
         }
         return response
