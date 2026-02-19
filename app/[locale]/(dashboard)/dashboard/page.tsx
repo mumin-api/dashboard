@@ -19,6 +19,7 @@ export default function DashboardPage() {
         avgResponseTime: 42,
         totalRequests: 0,
     })
+    const [isFreeMode, setIsFreeMode] = useState(false)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -29,6 +30,7 @@ export default function DashboardPage() {
 
                 try {
                     const balanceRes: any = await billingApi.getBalance()
+                    setIsFreeMode(!!balanceRes?.freeMode)
                     setStats(prev => ({
                         ...prev,
                         balance: balanceRes?.balance ?? 0,
@@ -72,11 +74,11 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatsCard
                     title={t('stats.balance')}
-                    value={`${(stats?.balance ?? 0).toLocaleString()}`}
-                    subtitle={t('stats.creditsRemaining')}
+                    value={isFreeMode ? 'Unlimited' : `${(stats?.balance ?? 0).toLocaleString()}`}
+                    subtitle={isFreeMode ? 'Promotional Access' : t('stats.creditsRemaining')}
                     icon={<DollarSign className="w-6 h-6" />}
-                    trend={{ value: 0, isPositive: true }}
-                    color="gold"
+                    trend={isFreeMode ? undefined : { value: 0, isPositive: true }}
+                    color={isFreeMode ? 'emerald' : 'gold'}
                 />
                 <StatsCard
                     title={t('stats.todayRequests')}

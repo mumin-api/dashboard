@@ -30,6 +30,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [user, setUser] = useState<any>(null)
     const [balance, setBalance] = useState<number | null>(null)
+    const [isFreeMode, setIsFreeMode] = useState(false)
 
     const navItems = [
         { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard },
@@ -46,6 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 setUser(userRes.user || userRes)
                 const balanceRes: any = await billingApi.getBalance()
                 setBalance(balanceRes?.balance ?? 0)
+                setIsFreeMode(!!balanceRes?.freeMode)
             } catch (error) {
                 console.error('Failed to fetch header data', error)
             }
@@ -129,16 +131,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {/* Balance pill */}
                 {balance !== null && (
                     <div className="mx-4 mb-4 p-4 rounded-xl border"
-                        style={{ backgroundColor: 'rgba(245,158,11,0.06)', borderColor: 'rgba(245,158,11,0.25)' }}>
+                        style={{ 
+                            backgroundColor: isFreeMode ? 'rgba(5,150,105,0.06)' : 'rgba(245,158,11,0.06)', 
+                            borderColor: isFreeMode ? 'rgba(5,150,105,0.25)' : 'rgba(245,158,11,0.25)' 
+                        }}>
                         <div className="flex items-center gap-2 mb-1">
-                            <Coins className="w-4 h-4 text-gold-400" />
+                            {isFreeMode ? (
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            ) : (
+                                <Coins className="w-4 h-4 text-gold-400" />
+                            )}
                             <span className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.6)' }}>
                                 {td('stats.balance')}
                             </span>
                         </div>
-                        <p className="text-2xl font-display text-gold-400">{balance.toLocaleString()}</p>
+                        {isFreeMode ? (
+                            <p className="text-xl font-display text-emerald-400">Free Access</p>
+                        ) : (
+                            <p className="text-2xl font-display text-gold-400">{balance.toLocaleString()}</p>
+                        )}
                         <p className="text-[10px] font-body mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                            {td('stats.creditsRemaining')}
+                            {isFreeMode ? 'Promotional Mode Active' : td('stats.creditsRemaining')}
                         </p>
                     </div>
                 )}
@@ -205,9 +218,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                             {/* Balance chip */}
                             <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-accent"
-                                style={{ backgroundColor: 'rgba(5,150,105,0.08)', borderColor: 'rgba(5,150,105,0.2)', color: '#34d399' }}>
+                                style={{ 
+                                    backgroundColor: isFreeMode ? 'rgba(5,150,105,0.1)' : 'rgba(5,150,105,0.08)', 
+                                    borderColor: 'rgba(5,150,105,0.2)', 
+                                    color: '#34d399' 
+                                }}>
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                {balance !== null ? balance.toLocaleString() : '...'} {td('stats.creditsRemaining').split(' ')[0]}
+                                {isFreeMode ? 'FREE' : (
+                                    <>
+                                        {balance !== null ? balance.toLocaleString() : '...'} {td('stats.creditsRemaining').split(' ')[0]}
+                                    </>
+                                )}
                             </div>
 
                             {/* User */}

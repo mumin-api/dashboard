@@ -12,6 +12,7 @@ export default function BillingPage() {
     const tc = useTranslations('Common')
     const [balance, setBalance] = useState<any>(null)
     const [transactions, setTransactions] = useState<any[]>([])
+    const [isFreeMode, setIsFreeMode] = useState(false)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -20,8 +21,9 @@ export default function BillingPage() {
                 const [balanceData, txData] = await Promise.all([
                     billingApi.getBalance(),
                     billingApi.getTransactions()
-                ])
+                ]) as [any, any]
                 setBalance(balanceData)
+                setIsFreeMode(!!balanceData.freeMode)
 
                 // Handle various potential response structures
                 const txArray = (txData as any).data || (Array.isArray(txData) ? txData : [])
@@ -47,60 +49,72 @@ export default function BillingPage() {
                     </p>
                 </div>
 
-                <button className="px-6 py-3 bg-gold-500 hover:bg-gold-600 text-emerald-950 rounded-xl font-accent flex items-center shadow-lg active:scale-95 transition-all">
-                    <Plus className="w-4 h-4 mr-2" />
-                    {t('topUp')}
-                </button>
+                {!isFreeMode && (
+                    <button className="px-6 py-3 bg-gold-500 hover:bg-gold-600 text-emerald-950 rounded-xl font-accent flex items-center shadow-lg active:scale-95 transition-all">
+                        <Plus className="w-4 h-4 mr-2" />
+                        {t('topUp')}
+                    </button>
+                )}
             </div>
 
             {/* Current Balance */}
-            <IslamicCard glow>
+            <IslamicCard glow={!isFreeMode}>
                 <div className="p-8 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-500/10 rounded-full mb-4 border border-gold-500/20">
-                        <CreditCard className="w-8 h-8 text-gold-500" />
+                    <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 border ${
+                        isFreeMode 
+                        ? "bg-emerald-500/10 border-emerald-500/20" 
+                        : "bg-gold-500/10 border-gold-500/20"
+                    }`}>
+                        <CreditCard className={`w-8 h-8 ${isFreeMode ? "text-emerald-400" : "text-gold-500"}`} />
                     </div>
-                    <h3 className="text-lg font-accent text-emerald-100/60 mb-2">{t('currentBalance')}</h3>
-                    <p className="text-5xl font-display text-emerald-100 mb-2">
-                        {(balance?.balance || 0).toLocaleString()}
+                    <h3 className="text-lg font-accent text-emerald-100/60 mb-2">
+                        {isFreeMode ? "Service Status" : t('currentBalance')}
+                    </h3>
+                    <p className={`font-display text-emerald-100 mb-2 ${isFreeMode ? "text-3xl" : "text-5xl"}`}>
+                        {isFreeMode ? "Unlimited Promotional Access" : (balance?.balance || 0).toLocaleString()}
                     </p>
-                    <p className="text-ivory/60 font-body">{t('credits')}</p>
+                    <p className="text-ivory/60 font-body">
+                        {isFreeMode ? "All API features are currently free for developers" : t('credits')}
+                    </p>
                 </div>
             </IslamicCard>
 
             {/* Pricing Tiers */}
-            <div>
-                <h2 className="text-2xl font-display text-emerald-100 mb-6">{t('packages')}</h2>
+            {!isFreeMode && (
+                <div>
+                    <h2 className="text-2xl font-display text-emerald-100 mb-6">{t('packages')}</h2>
 
-                <div className="grid md:grid-cols-3 gap-6">
-                    {[
-                        { credits: 10000, price: '$10', popular: false },
-                        { credits: 50000, price: '$45', popular: true },
-                        { credits: 100000, price: '$80', popular: false },
-                    ].map((pkg) => (
-                        <IslamicCard key={pkg.credits} hover>
-                            <div className="p-6 relative">
-                                {pkg.popular && (
-                                    <div className="absolute top-0 right-0 bg-gold-500 text-emerald-950 text-xs font-accent px-3 py-1 rounded-bl-xl rounded-tr-xl font-bold">
-                                        {t('popular')}
+                    <div className="grid md:grid-cols-3 gap-6">
+                        {[
+                            { credits: 10000, price: '$10', popular: false },
+                            { credits: 50000, price: '$45', popular: true },
+                            { credits: 100000, price: '$80', popular: false },
+                        ].map((pkg) => (
+                            <IslamicCard key={pkg.credits} hover>
+                                <div className="p-6 relative">
+                                    {pkg.popular && (
+                                        <div className="absolute top-0 right-0 bg-gold-500 text-emerald-950 text-xs font-accent px-3 py-1 rounded-bl-xl rounded-tr-xl font-bold">
+                                            {t('popular')}
+                                        </div>
+                                    )}
+
+                                    <div className="text-center">
+                                        <p className="text-3xl font-display text-emerald-100 mb-2">
+                                            {pkg.credits.toLocaleString()}
+                                        </p>
+                                        <p className="text-ivory/60 font-body mb-4">{t('credits')}</p>
+                                        <p className="text-4xl font-display text-gold-500 mb-6">{pkg.price}</p>
+
+                                        <button className="w-full px-4 py-3 bg-emerald-900/40 hover:bg-emerald-800/60 text-emerald-100 border border-emerald-500/30 rounded-xl font-accent transition-all active:scale-95">
+                                            {t('purchase')}
+                                        </button>
                                     </div>
-                                )}
-
-                                <div className="text-center">
-                                    <p className="text-3xl font-display text-emerald-100 mb-2">
-                                        {pkg.credits.toLocaleString()}
-                                    </p>
-                                    <p className="text-ivory/60 font-body mb-4">{t('credits')}</p>
-                                    <p className="text-4xl font-display text-gold-500 mb-6">{pkg.price}</p>
-
-                                    <button className="w-full px-4 py-3 bg-emerald-900/40 hover:bg-emerald-800/60 text-emerald-100 border border-emerald-500/30 rounded-xl font-accent transition-all active:scale-95">
-                                        {t('purchase')}
-                                    </button>
                                 </div>
-                            </div>
-                        </IslamicCard>
-                    ))}
+                            </IslamicCard>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Transaction History */}
             <IslamicCard>
