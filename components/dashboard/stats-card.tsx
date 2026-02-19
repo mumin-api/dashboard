@@ -57,11 +57,11 @@ export function StatsCard({ title, value, subtitle, icon, trend, color = 'emeral
                     )}
                 </div>
 
-                <h3 className="text-xs font-accent uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                <h3 className="text-xs font-accent uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.6)' }}>
                     {title}
                 </h3>
                 <p className="text-3xl font-display mb-1" style={{ color: c.text }}>{value}</p>
-                <p className="text-xs font-body" style={{ color: 'rgba(255,255,255,0.25)' }}>{subtitle}</p>
+                <p className="text-xs font-body" style={{ color: 'rgba(255,255,255,0.45)' }}>{subtitle}</p>
             </div>
         </motion.div>
     )

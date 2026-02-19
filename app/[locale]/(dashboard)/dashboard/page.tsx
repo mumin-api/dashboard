@@ -59,11 +59,11 @@ export default function DashboardPage() {
         <div className="space-y-8">
             {/* Header */}
             <div>
-                <h1 className="text-4xl font-display" style={{ color: 'rgba(255,255,255,0.9)' }}>
+                <h1 className="text-4xl font-display text-ivory/90">
                     {t('welcome')},{' '}
-                    <span className="text-gold-400">{user?.displayName || user?.firstName || 'Sahabi'}</span>
+                    <span className="text-emerald-400">{user?.displayName || user?.firstName || 'Sahabi'}</span>
                 </h1>
-                <p className="mt-2 font-body" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                <p className="mt-2 font-body text-ivory/60">
                     {t('subtitle')}
                 </p>
             </div>

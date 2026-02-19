@@ -30,8 +30,8 @@ export default function AnalyticsPage() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-4xl font-display" style={{ color: 'rgba(255,255,255,0.9)' }}>{t('title')}</h1>
-                <p className="mt-2 font-body" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                <h1 className="text-4xl font-display text-emerald-500">{t('title')}</h1>
+                <p className="mt-2 font-body text-ivory/60">
                     {t('description')}
                 </p>
             </div>
@@ -68,12 +68,12 @@ export default function AnalyticsPage() {
             {/* Geographic Distribution */}
             <IslamicCard>
                 <div className="p-6">
-                    <h3 className="text-base font-display font-bold mb-6" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                    <h3 className="text-base font-display font-bold mb-6 text-emerald-100">
                         {t('geo.title')}
                     </h3>
-                    <div className="text-center p-8 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
-                        <Globe className="w-8 h-8 mx-auto mb-3" style={{ color: 'rgba(255,255,255,0.1)' }} />
-                        <p className="text-sm font-body" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                    <div className="text-center p-8 rounded-xl bg-white/[0.02] border border-emerald-500/5">
+                        <Globe className="w-8 h-8 mx-auto mb-3 text-emerald-500/20" />
+                        <p className="text-sm font-body text-ivory/40 italic">
                             {t('geo.noData')}
                         </p>
                     </div>
@@ -83,12 +83,12 @@ export default function AnalyticsPage() {
             {/* Top Endpoints */}
             <IslamicCard>
                 <div className="p-6">
-                    <h3 className="text-base font-display font-bold mb-6" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                    <h3 className="text-base font-display font-bold mb-6 text-emerald-100">
                         {t('endpoints.title')}
                     </h3>
-                    <div className="text-center p-8 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
-                        <BarChart3 className="w-8 h-8 mx-auto mb-3" style={{ color: 'rgba(255,255,255,0.1)' }} />
-                        <p className="text-sm font-body" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                    <div className="text-center p-8 rounded-xl bg-white/[0.02] border border-emerald-500/5">
+                        <BarChart3 className="w-8 h-8 mx-auto mb-3 text-emerald-500/20" />
+                        <p className="text-sm font-body text-ivory/40 italic">
                             {t('endpoints.noData')}
                         </p>
                     </div>

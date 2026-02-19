@@ -15,8 +15,8 @@ export default function ApiKeysPage() {
         <div className="space-y-8">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-4xl font-display text-emerald-900">{t('title')}</h1>
-                    <p className="text-charcoal/60 mt-2 font-body">
+                    <h1 className="text-4xl font-display text-emerald-500">{t('title')}</h1>
+                    <p className="text-ivory/60 mt-2 font-body">
                         {t('description')}
                     </p>
                 </div>

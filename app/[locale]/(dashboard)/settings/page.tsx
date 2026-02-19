@@ -116,8 +116,8 @@ export default function SettingsPage() {
     return (
         <div className="space-y-8 max-w-4xl mx-auto">
             <div>
-                <h1 className="text-4xl font-display text-emerald-900">{t('title')}</h1>
-                <p className="text-charcoal/60 mt-2 font-body">
+                <h1 className="text-4xl font-display text-emerald-500">{t('title')}</h1>
+                <p className="text-ivory/60 mt-2 font-body">
                     {t('description')}
                 </p>
             </div>
@@ -126,26 +126,26 @@ export default function SettingsPage() {
             <IslamicCard>
                 <div className="p-6">
                     <div className="flex items-center space-x-3 mb-6">
-                        <User className="w-5 h-5 text-emerald-600" />
-                        <h3 className="text-xl font-display text-emerald-900">{t('profile.title')}</h3>
+                        <User className="w-5 h-5 text-emerald-500" />
+                        <h3 className="text-xl font-display text-emerald-100">{t('profile.title')}</h3>
                     </div>
 
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="text-sm font-accent text-charcoal mb-2 block">{t('profile.email')}</label>
+                                <label className="text-sm font-accent text-ivory/60 mb-2 block">{t('profile.email')}</label>
                                 <div className="relative">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-900/40" />
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-100/40" />
                                     <input
                                         type="email"
                                         name="email"
                                         value={formData.email}
                                         onChange={handleInputChange}
-                                        className="w-full pl-11 pr-4 py-3 border border-emerald-900/20 rounded-xl focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 bg-white/50"
+                                        className="w-full pl-11 pr-4 py-3 border border-emerald-500/20 rounded-xl focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white/5 text-ivory"
                                     />
                                 </div>
                                 {formData.email !== user?.email && (
-                                    <p className="mt-2 text-xs text-amber-600 font-accent flex items-center gap-1">
+                                    <p className="mt-2 text-xs text-amber-400 font-accent flex items-center gap-1">
                                         <Shield className="w-3 h-3" />
                                         Changing email requires verification
                                     </p>
@@ -153,14 +153,14 @@ export default function SettingsPage() {
                             </div>
 
                             <div>
-                                <label className="text-sm font-accent text-charcoal mb-2 block">{t('profile.displayName')}</label>
+                                <label className="text-sm font-accent text-ivory/60 mb-2 block">{t('profile.displayName')}</label>
                                 <input
                                     type="text"
                                     name="displayName"
                                     value={formData.displayName}
                                     onChange={handleInputChange}
                                     placeholder={t('profile.placeholder')}
-                                    className="w-full px-4 py-3 border border-emerald-900/20 rounded-xl focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 bg-white/50"
+                                    className="w-full px-4 py-3 border border-emerald-500/20 rounded-xl focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white/5 text-ivory"
                                 />
                             </div>
                         </div>
@@ -263,32 +263,32 @@ export default function SettingsPage() {
             <IslamicCard>
                 <div className="p-6">
                     <div className="flex items-center space-x-3 mb-6">
-                        <Shield className="w-5 h-5 text-emerald-600" />
-                        <h3 className="text-xl font-display text-emerald-900">{t('apiPref.title')}</h3>
+                        <Shield className="w-5 h-5 text-emerald-500" />
+                        <h3 className="text-xl font-display text-emerald-100">{t('apiPref.title')}</h3>
                     </div>
 
                     <div className="space-y-4">
                         <div>
-                            <label className="text-sm font-accent text-charcoal mb-2 block">{t('apiPref.webhook')}</label>
+                            <label className="text-sm font-accent text-ivory/60 mb-2 block">{t('apiPref.webhook')}</label>
                             <input
                                 type="url"
                                 placeholder="https://your-domain.com/webhook"
-                                className="w-full px-4 py-3 border border-emerald-900/20 rounded-xl focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 bg-white/50"
+                                className="w-full px-4 py-3 border border-emerald-500/20 rounded-xl focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white/5 text-ivory placeholder:text-ivory/20"
                             />
                         </div>
 
                         <div>
-                            <label className="text-sm font-accent text-charcoal mb-2 block">
+                            <label className="text-sm font-accent text-ivory/60 mb-2 block">
                                 {t('apiPref.ipWhitelist')}
                             </label>
                             <textarea
                                 placeholder="192.168.1.1, 10.0.0.1"
                                 rows={3}
-                                className="w-full px-4 py-3 border border-emerald-900/20 rounded-xl focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 bg-white/50"
+                                className="w-full px-4 py-3 border border-emerald-500/20 rounded-xl focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white/5 text-ivory placeholder:text-ivory/20"
                             />
                         </div>
 
-                        <button className="px-6 py-3 bg-emerald-900 hover:bg-emerald-800 text-ivory rounded-xl font-accent shadow-md transition-all active:scale-95">
+                        <button className="px-6 py-3 bg-emerald-900 hover:bg-emerald-800 text-ivory rounded-xl font-accent shadow-md transition-all active:scale-95 border border-emerald-500/20">
                             {t('apiPref.update')}
                         </button>
                     </div>
@@ -299,8 +299,8 @@ export default function SettingsPage() {
             <IslamicCard>
                 <div className="p-6">
                     <div className="flex items-center space-x-3 mb-6">
-                        <Bell className="w-5 h-5 text-emerald-600" />
-                        <h3 className="text-xl font-display text-emerald-900">{t('notifications.title')}</h3>
+                        <Bell className="w-5 h-5 text-emerald-500" />
+                        <h3 className="text-xl font-display text-emerald-100">{t('notifications.title')}</h3>
                     </div>
 
                     <div className="space-y-4">
@@ -311,13 +311,13 @@ export default function SettingsPage() {
                         ].map((item) => (
                             <div key={item.label} className="flex items-start justify-between">
                                 <div>
-                                    <p className="font-accent text-charcoal">{item.label}</p>
-                                    <p className="text-sm text-charcoal/60 font-body">{item.description}</p>
+                                    <p className="font-accent text-emerald-100">{item.label}</p>
+                                    <p className="text-sm text-ivory/60 font-body">{item.description}</p>
                                 </div>
                                 <input
                                     type="checkbox"
                                     defaultChecked
-                                    className="mt-1 w-5 h-5 text-emerald-600 border-emerald-900/20 rounded focus:ring-emerald-600"
+                                    className="mt-1 w-5 h-5 text-emerald-500 border-emerald-500/20 rounded focus:ring-emerald-500 bg-white/5"
                                 />
                             </div>
                         ))}
@@ -329,17 +329,17 @@ export default function SettingsPage() {
             <IslamicCard>
                 <div className="p-6">
                     <div className="flex items-center space-x-3 mb-6">
-                        <Trash2 className="w-5 h-5 text-rose-600" />
-                        <h3 className="text-xl font-display text-rose-600">{t('danger.title')}</h3>
+                        <Trash2 className="w-5 h-5 text-rose-500" />
+                        <h3 className="text-xl font-display text-rose-500">{t('danger.title')}</h3>
                     </div>
 
                     <div className="space-y-4">
-                        <div className="p-4 border border-rose-200 bg-rose-50/50 rounded-xl">
-                            <h4 className="font-accent text-charcoal mb-2">{t('danger.delete')}</h4>
-                            <p className="text-sm text-charcoal/60 font-body mb-4">
+                        <div className="p-4 border border-rose-500/20 bg-rose-500/5 rounded-xl">
+                            <h4 className="font-accent text-rose-100 mb-2">{t('danger.delete')}</h4>
+                            <p className="text-sm text-ivory/60 font-body mb-4">
                                 {t('danger.deleteDesc')}
                             </p>
-                            <button className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-accent shadow-md transition-all active:scale-95">
+                            <button className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-accent shadow-md transition-all active:scale-95 border border-rose-500/30">
                                 {t('danger.delete')}
                             </button>
                         </div>

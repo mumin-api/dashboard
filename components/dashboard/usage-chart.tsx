@@ -51,38 +51,38 @@ export function UsageChart() {
                 {/* Header */}
                 <div className="flex items-start justify-between mb-6">
                     <div>
-                        <h3 className="text-base font-display font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                        <h3 className="text-base font-display font-bold" style={{ color: 'rgba(255,255,255,0.95)' }}>
                             {t('title')}
                         </h3>
-                        <p className="text-xs font-body mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{t('subtitle')}</p>
+                        <p className="text-xs font-body mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>{t('subtitle')}</p>
                     </div>
 
                     <div className="flex items-center gap-6">
                         <div className="text-right">
-                            <p className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>{t('thisWeek')}</p>
+                            <p className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.5)' }}>{t('thisWeek')}</p>
                             <p className="text-xl font-display text-emerald-400">{totalWeek.toLocaleString()}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>{t('today')}</p>
+                            <p className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.5)' }}>{t('today')}</p>
                             <p className="text-xl font-display text-gold-400">{totalToday.toLocaleString()}</p>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                            <span className="text-xs font-body" style={{ color: 'rgba(255,255,255,0.35)' }}>{t('requests')}</span>
+                            <span className="text-xs font-body" style={{ color: 'rgba(255,255,255,0.6)' }}>{t('requests')}</span>
                         </div>
                     </div>
                 </div>
 
                 {loading && (
                     <div className="h-[220px] flex items-center justify-center">
-                        <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'rgba(255,255,255,0.2)' }} />
+                        <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'rgba(255,255,255,0.4)' }} />
                     </div>
                 )}
 
                 {!loading && data.length === 0 && (
                     <div className="h-[220px] flex flex-col items-center justify-center gap-3">
-                        <TrendingUp className="w-8 h-8" style={{ color: 'rgba(255,255,255,0.1)' }} />
-                        <p className="text-sm font-body px-8 text-center" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                        <TrendingUp className="w-8 h-8 font-bold" style={{ color: 'rgba(255,255,255,0.2)' }} />
+                        <p className="text-sm font-body px-8 text-center" style={{ color: 'rgba(255,255,255,0.45)' }}>
                             {t('noData')}
                         </p>
                     </div>
@@ -95,7 +95,7 @@ export function UsageChart() {
                             {[1, 0.75, 0.5, 0.25, 0].map((frac) => (
                                 <div key={frac} className="flex items-center gap-2">
                                     <span className="text-[10px] font-mono w-8 text-right flex-shrink-0"
-                                        style={{ color: 'rgba(255,255,255,0.2)' }}>
+                                        style={{ color: 'rgba(255,255,255,0.5)' }}>
                                         {Math.round(maxVal * frac)}
                                     </span>
                                     <div className="flex-1 border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }} />
@@ -135,7 +135,7 @@ export function UsageChart() {
 
                                         {/* Label */}
                                         <span className="text-[10px] font-accent mt-1"
-                                            style={{ color: isToday ? '#34d399' : 'rgba(255,255,255,0.25)' }}>
+                                            style={{ color: isToday ? '#34d399' : 'rgba(255,255,255,0.6)' }}>
                                             {labels[i]}
                                         </span>
                                     </div>

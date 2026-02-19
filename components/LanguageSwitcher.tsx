@@ -21,7 +21,7 @@ export function LanguageSwitcher() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-accent transition-all ${
                     locale === 'en' 
                     ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                    : 'text-gray-500 hover:text-gray-300'
+                    : 'text-ivory/40 hover:text-ivory/80'
                 }`}
             >
                 EN
@@ -31,7 +31,7 @@ export function LanguageSwitcher() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-accent transition-all ${
                     locale === 'ru' 
                     ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                    : 'text-gray-500 hover:text-gray-300'
+                    : 'text-ivory/40 hover:text-ivory/80'
                 }`}
             >
                 RU

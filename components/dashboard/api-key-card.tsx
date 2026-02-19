@@ -97,11 +97,11 @@ export function ApiKeyCard() {
         <IslamicCard>
             <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-display text-emerald-900">{t('title')}</h3>
+                    <h3 className="text-xl font-display text-emerald-100">{t('title')}</h3>
                     <button
                         onClick={handleCreateKey}
                         disabled={loading || keys.length >= 5}
-                        className="relative z-10 px-4 py-2 bg-emerald-900 hover:bg-emerald-800 disabled:opacity-50 text-ivory rounded-lg text-sm font-accent transition-all cursor-pointer shadow-lg active:scale-95"
+                        className="relative z-10 px-4 py-2 bg-emerald-900/40 hover:bg-emerald-800/60 disabled:opacity-50 text-emerald-100 border border-emerald-500/30 rounded-lg text-sm font-accent transition-all cursor-pointer shadow-lg active:scale-95"
                     >
                         {loading && keys.length === 0 ? tc('loading') : t('newKey')}
                     </button>
@@ -109,13 +109,13 @@ export function ApiKeyCard() {
 
                 <div className="space-y-4">
                     {error && (
-                        <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 flex items-start space-x-3">
-                            <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-200 flex items-start space-x-3">
+                            <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-rose-500" />
                             <div className="flex-1">
                                 <p className="font-accent text-sm">{error}</p>
                                 <button
                                     onClick={loadKeys}
-                                    className="text-xs underline mt-1 hover:text-rose-900 font-bold"
+                                    className="text-xs underline mt-1 hover:text-rose-400 font-bold"
                                 >
                                     Try Refreshing
                                 </button>
@@ -124,17 +124,17 @@ export function ApiKeyCard() {
                     )}
 
                     {loading && keys.length === 0 ? (
-                        <div className="text-center p-8 bg-sand/20 rounded-xl">
-                            <RefreshCw className="w-8 h-8 animate-spin text-emerald-900/20 mx-auto mb-2" />
-                            <p className="text-sm text-charcoal/40 font-body italic">{t('connecting')}</p>
+                        <div className="text-center p-8 bg-emerald-900/5 rounded-xl border border-emerald-900/10">
+                            <RefreshCw className="w-8 h-8 animate-spin text-emerald-500/20 mx-auto mb-2" />
+                            <p className="text-sm text-ivory/40 font-body italic">{t('connecting')}</p>
                         </div>
                     ) : keys.length === 0 && !error ? (
-                        <div className="text-center p-8 bg-sand/30 rounded-xl border border-dashed border-emerald-900/10">
-                            <Key className="w-8 h-8 text-emerald-900/20 mx-auto mb-2" />
-                            <p className="text-sm text-charcoal/60 font-body mb-4">{t('noKeys')}</p>
+                        <div className="text-center p-8 bg-emerald-900/5 rounded-xl border border-dashed border-emerald-500/20">
+                            <Key className="w-8 h-8 text-emerald-500/20 mx-auto mb-2" />
+                            <p className="text-sm text-ivory/60 font-body mb-4">{t('noKeys')}</p>
                             <button
                                 onClick={handleCreateKey}
-                                className="px-6 py-2 bg-emerald-900 text-ivory rounded-lg font-accent hover:shadow-glow-emerald transition-all active:scale-95"
+                                className="px-6 py-2 bg-emerald-900 hover:bg-emerald-800 text-ivory rounded-lg font-accent border border-emerald-500/30 transition-all active:scale-95"
                             >
                                 {t('firstKey')}
                             </button>
@@ -143,17 +143,17 @@ export function ApiKeyCard() {
                         keys.map((key) => (
                             <div
                                 key={key.id}
-                                className="p-4 border border-emerald-900/10 rounded-xl hover:border-gold-500/30 transition-colors bg-white/50 relative overflow-hidden group"
+                                className="p-4 border border-emerald-500/10 rounded-xl hover:border-emerald-500/30 transition-colors bg-white/[0.03] relative overflow-hidden group"
                             >
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
-                                        <h4 className="font-accent text-emerald-900 mb-1">{t('productionKey')}</h4>
-                                        <p className="text-sm text-charcoal/60 font-body">
+                                        <h4 className="font-accent text-emerald-400 mb-1">{t('productionKey')}</h4>
+                                        <p className="text-sm text-ivory/60 font-body">
                                             {new Date(key.createdAt).toLocaleDateString()}
                                         </p>
                                     </div>
 
-                                    <div className="p-1 px-2 bg-emerald-100 text-emerald-700 text-[10px] rounded uppercase tracking-wider font-bold">
+                                    <div className="p-1 px-2 bg-emerald-500/10 text-emerald-400 text-[10px] rounded uppercase tracking-wider font-bold border border-emerald-500/20">
                                         {t('active')}
                                     </div>
                                 </div>
@@ -177,12 +177,12 @@ export function ApiKeyCard() {
                                     </div>
                                 )}
 
-                                <div className="flex items-center space-x-2 bg-sand/50 p-3 rounded-lg mb-3 border border-emerald-900/5">
-                                    <code className="flex-1 text-sm font-mono text-charcoal opacity-70">
+                                <div className="flex items-center space-x-2 bg-white/5 p-3 rounded-lg mb-3 border border-emerald-500/10">
+                                    <code className="flex-1 text-sm font-mono text-emerald-100">
                                         {key.keyPrefix}*****************************
                                     </code>
                                     <button
-                                        className="p-2 hover:bg-emerald-900/5 rounded transition-all"
+                                        className="p-2 hover:bg-white/5 rounded transition-all text-emerald-100/60 hover:text-emerald-100"
                                         onClick={() => {
                                             if (newFullKey && newFullKey.startsWith(key.keyPrefix)) {
                                                 copyToClipboard(newFullKey)
@@ -198,13 +198,13 @@ export function ApiKeyCard() {
 
                                 <div className="flex items-center justify-between text-[11px]">
                                     <div className="flex items-center space-x-4">
-                                        <span className="text-charcoal/40 font-body">
+                                        <span className="text-ivory/40 font-body">
                                             {t('usage')}: {key.lastUsedAt ? new Date(key.lastUsedAt).toLocaleDateString() : t('none')}
                                         </span>
                                         <button
                                             onClick={() => handleRotateKey(key.id)}
                                             disabled={loading}
-                                            className="text-emerald-700 hover:text-emerald-900 flex items-center space-x-1 font-accent"
+                                            className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 font-accent"
                                         >
                                             <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
                                             <span>{t('refresh')}</span>

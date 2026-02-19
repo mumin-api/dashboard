@@ -88,7 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         </div>
                         <div>
                             <span className="text-ivory font-display text-lg leading-none block">Mumin API</span>
-                            <span className="text-[10px] font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>Developer Console</span>
+                            <span className="text-[10px] font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.6)' }}>Developer Console</span>
                         </div>
                     </div>
                 </div>
@@ -107,7 +107,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 className="relative flex items-center gap-3 px-4 py-3 rounded-xl font-accent text-sm transition-all duration-200 group"
                                 style={{
                                     backgroundColor: isActive ? 'rgba(5,150,105,0.15)' : 'transparent',
-                                    color: isActive ? '#34d399' : 'rgba(255,255,255,0.5)',
+                                    color: isActive ? '#34d399' : 'rgba(255,255,255,0.7)',
                                     border: isActive ? '1px solid rgba(5,150,105,0.25)' : '1px solid transparent',
                                 }}
                             >
@@ -129,15 +129,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {/* Balance pill */}
                 {balance !== null && (
                     <div className="mx-4 mb-4 p-4 rounded-xl border"
-                        style={{ backgroundColor: 'rgba(245,158,11,0.06)', borderColor: 'rgba(245,158,11,0.15)' }}>
+                        style={{ backgroundColor: 'rgba(245,158,11,0.06)', borderColor: 'rgba(245,158,11,0.25)' }}>
                         <div className="flex items-center gap-2 mb-1">
                             <Coins className="w-4 h-4 text-gold-400" />
-                            <span className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                            <span className="text-xs font-accent uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.6)' }}>
                                 {td('stats.balance')}
                             </span>
                         </div>
                         <p className="text-2xl font-display text-gold-400">{balance.toLocaleString()}</p>
-                        <p className="text-[10px] font-body mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <p className="text-[10px] font-body mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
                             {td('stats.creditsRemaining')}
                         </p>
                     </div>
@@ -152,10 +152,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="p-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
                     <button
                         onClick={() => authApi.logout().then(() => window.location.href = `/${locale}/login`)}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-accent text-sm transition-all"
-                        style={{ color: 'rgba(255,255,255,0.35)' }}
-                        onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.08)' }}
-                        onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.35)'; e.currentTarget.style.backgroundColor = 'transparent' }}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-accent text-sm transition-all shadow-sm"
+                        style={{ color: 'rgba(255,255,255,0.6)' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.12)' }}
+                        onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; e.currentTarget.style.backgroundColor = 'transparent' }}
                     >
                         <LogOut className="w-4 h-4" />
                         <span>{t('logout')}</span>
@@ -184,17 +184,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <div className="flex items-center justify-between px-6 py-4">
                         <button
                             className="lg:hidden p-2 rounded-lg transition-colors"
-                            style={{ color: 'rgba(255,255,255,0.5)' }}
+                            style={{ color: 'rgba(255,255,255,0.8)' }}
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                         >
                             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                         </button>
 
                         {/* Page breadcrumb */}
-                        <div className="hidden lg:flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <div className="hidden lg:flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
                             <span>Console</span>
-                            <ChevronRight className="w-3 h-3" />
-                            <span className="text-ivory/70">{navItems.find(n => n.href === pathname)?.label || 'Dashboard'}</span>
+                            <ChevronRight className="w-3 h-3 opacity-50" />
+                            <span className="text-ivory/90">{navItems.find(n => n.href === pathname)?.label || 'Dashboard'}</span>
                         </div>
 
                         <div className="flex items-center gap-4 ml-auto">
@@ -213,10 +213,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             {/* User */}
                             <div className="flex items-center gap-3 pl-4 border-l" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
                                 <div className="hidden md:block text-right">
-                                    <p className="text-sm font-accent text-ivory/80 leading-none mb-1">
+                                    <p className="text-sm font-accent text-ivory leading-none mb-1">
                                         {user?.displayName || 'Loading...'}
                                     </p>
-                                    <p className="text-xs font-body leading-none" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                                    <p className="text-xs font-body leading-none" style={{ color: 'rgba(255,255,255,0.5)' }}>
                                         {user?.email || ''}
                                     </p>
                                 </div>
