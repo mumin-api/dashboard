@@ -67,7 +67,13 @@ export const authApi = {
     /**
      * Update user profile
      */
-    async updateProfile(data: { displayName?: string; email?: string }) {
+    async updateProfile(data: { 
+        displayName?: string; 
+        email?: string;
+        lowBalanceAlerts?: boolean;
+        usageReports?: boolean;
+        securityAlerts?: boolean;
+    }) {
         return apiClient.patch('/auth/profile', data)
     },
 

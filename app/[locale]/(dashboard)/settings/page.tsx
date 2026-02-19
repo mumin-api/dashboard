@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { User, Bell, Shield, Trash2, Mail, Loader2, ArrowRight } from 'lucide-react'
 import { IslamicCard } from '@/components/islamic/islamic-card'
 import { authApi } from '@/lib/api/auth'
+import { keysApi } from '@/lib/api/keys'
 import { toast } from '@/components/ui/toast'
 import { useTranslations, useLocale } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -18,6 +19,9 @@ export default function SettingsPage() {
     const [formData, setFormData] = useState({
         email: '',
         displayName: '',
+        lowBalanceAlerts: true,
+        usageReports: true,
+        securityAlerts: true,
     })
 
     // Email Change flow states
@@ -25,6 +29,13 @@ export default function SettingsPage() {
     const [verificationCode, setVerificationCode] = useState('')
     const [verifying, setVerifying] = useState(false)
     const [resendCooldown, setResendCooldown] = useState(0)
+
+    // API Preferences states
+    const [apiPrefs, setApiPrefs] = useState({
+        webhookUrl: '',
+        allowedIPs: '',
+    })
+    const [savingApi, setSavingApi] = useState(false)
 
     useEffect(() => {
         authApi.getCurrentUser()
@@ -34,10 +45,30 @@ export default function SettingsPage() {
                 setFormData({
                     email: userData.email || '',
                     displayName: userData.displayName || userData.firstName || '',
+                    lowBalanceAlerts: userData.lowBalanceAlerts ?? true,
+                    usageReports: userData.usageReports ?? true,
+                    securityAlerts: userData.securityAlerts ?? true,
                 })
             })
             .catch(console.error)
             .finally(() => setLoading(false))
+
+        // Fetch API preferences
+        const fetchKeys = async () => {
+            try {
+                const res: any = await keysApi.getMe()
+                const key = Array.isArray(res) ? res[0] : res
+                if (key) {
+                    setApiPrefs({
+                        webhookUrl: key.webhookUrl || '',
+                        allowedIPs: key.allowedIPs?.join(', ') || '',
+                    })
+                }
+            } catch (e) {
+                console.error('Failed to fetch API keys for settings', e)
+            }
+        }
+        fetchKeys()
     }, [])
 
     useEffect(() => {
@@ -64,17 +95,44 @@ export default function SettingsPage() {
                 return
             }
 
-            // Regular profile update (displayName only)
-            await authApi.updateProfile({ displayName: formData.displayName })
+            // Regular profile update (displayName & notifications)
+            await authApi.updateProfile({ 
+                displayName: formData.displayName,
+                lowBalanceAlerts: formData.lowBalanceAlerts,
+                usageReports: formData.usageReports,
+                securityAlerts: formData.securityAlerts,
+            })
             toast(t('success'), 'success')
             
             // Update local user state
-            setUser({ ...user, displayName: formData.displayName })
+            setUser({ 
+                ...user, 
+                displayName: formData.displayName,
+                lowBalanceAlerts: formData.lowBalanceAlerts,
+                usageReports: formData.usageReports,
+                securityAlerts: formData.securityAlerts,
+            })
         } catch (error: any) {
             console.error('Failed to update profile', error)
             toast(error.message || t('fail'), 'error')
         } finally {
             setSaving(false)
+        }
+    }
+
+    const handleUpdateApiPrefs = async () => {
+        try {
+            setSavingApi(true)
+            const ips = apiPrefs.allowedIPs.split(',').map(ip => ip.trim()).filter(ip => ip !== '')
+            await keysApi.updateSettings({
+                webhookUrl: apiPrefs.webhookUrl,
+                allowedIPs: ips
+            })
+            toast('API preferences updated', 'success')
+        } catch (error: any) {
+            toast(error.message || tc('error'), 'error')
+        } finally {
+            setSavingApi(false)
         }
     }
 
@@ -272,6 +330,8 @@ export default function SettingsPage() {
                             <label className="text-sm font-accent text-ivory/60 mb-2 block">{t('apiPref.webhook')}</label>
                             <input
                                 type="url"
+                                value={apiPrefs.webhookUrl}
+                                onChange={(e) => setApiPrefs({ ...apiPrefs, webhookUrl: e.target.value })}
                                 placeholder="https://your-domain.com/webhook"
                                 className="w-full px-4 py-3 border border-emerald-500/20 rounded-xl focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white/5 text-ivory placeholder:text-ivory/20"
                             />
@@ -282,13 +342,20 @@ export default function SettingsPage() {
                                 {t('apiPref.ipWhitelist')}
                             </label>
                             <textarea
+                                value={apiPrefs.allowedIPs}
+                                onChange={(e) => setApiPrefs({ ...apiPrefs, allowedIPs: e.target.value })}
                                 placeholder="192.168.1.1, 10.0.0.1"
                                 rows={3}
                                 className="w-full px-4 py-3 border border-emerald-500/20 rounded-xl focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white/5 text-ivory placeholder:text-ivory/20"
                             />
                         </div>
 
-                        <button className="px-6 py-3 bg-emerald-900 hover:bg-emerald-800 text-ivory rounded-xl font-accent shadow-md transition-all active:scale-95 border border-emerald-500/20">
+                        <button 
+                            onClick={handleUpdateApiPrefs}
+                            disabled={savingApi}
+                            className="px-6 py-3 bg-emerald-900 hover:bg-emerald-800 disabled:opacity-50 text-ivory rounded-xl font-accent shadow-md transition-all active:scale-95 border border-emerald-500/20 flex items-center gap-2"
+                        >
+                            {savingApi ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                             {t('apiPref.update')}
                         </button>
                     </div>
@@ -305,20 +372,23 @@ export default function SettingsPage() {
 
                     <div className="space-y-4">
                         {[
-                            { label: t('notifications.lowBalance'), description: t('notifications.lowBalanceDesc') },
-                            { label: t('notifications.usageReports'), description: t('notifications.usageReportsDesc') },
-                            { label: t('notifications.securityAlerts'), description: t('notifications.securityAlertsDesc') },
+                            { id: 'lowBalanceAlerts', label: t('notifications.lowBalance'), description: t('notifications.lowBalanceDesc') },
+                            { id: 'usageReports', label: t('notifications.usageReports'), description: t('notifications.usageReportsDesc') },
+                            { id: 'securityAlerts', label: t('notifications.securityAlerts'), description: t('notifications.securityAlertsDesc') },
                         ].map((item) => (
-                            <div key={item.label} className="flex items-start justify-between">
-                                <div>
-                                    <p className="font-accent text-emerald-100">{item.label}</p>
+                            <div key={item.id} className="flex items-start justify-between group">
+                                <div className="flex-1 pr-4">
+                                    <p className="font-accent text-emerald-100 group-hover:text-emerald-400 transition-colors">{item.label}</p>
                                     <p className="text-sm text-ivory/60 font-body">{item.description}</p>
                                 </div>
-                                <input
-                                    type="checkbox"
-                                    defaultChecked
-                                    className="mt-1 w-5 h-5 text-emerald-500 border-emerald-500/20 rounded focus:ring-emerald-500 bg-white/5"
-                                />
+                                <div className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={(formData as any)[item.id]}
+                                        onChange={(e) => setFormData({ ...formData, [item.id]: e.target.checked })}
+                                        className="w-5 h-5 cursor-pointer accent-emerald-500 border-emerald-500/20 rounded focus:ring-emerald-500 bg-white/5"
+                                    />
+                                </div>
                             </div>
                         ))}
                     </div>
